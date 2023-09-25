@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.loltube.R
 import com.example.loltube.databinding.FragmentMainBinding
 import com.example.loltube.ui.adapter.ViewPagerFragmentAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -17,6 +18,11 @@ class MainFragment : Fragment() {
         ViewPagerFragmentAdapter(requireActivity())
     }
     private val title = arrayOf("Home", "Search", "MyPage")
+    private val tabIcon = arrayOf(
+        R.drawable.ic_home,
+        R.drawable.ic_search,
+        R.drawable.ic_my_page
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +42,7 @@ class MainFragment : Fragment() {
 
         TabLayoutMediator(binding.mainTabLayout, binding.mainViewpager) { tab, position ->
             tab.text = title[position]
+            tab.setIcon(tabIcon[position])
         }.attach()
     }
 

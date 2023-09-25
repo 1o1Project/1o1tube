@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         transaction = fragmentManager.beginTransaction()
-        transaction.add(R.id.main_fragment_frame, MainFragment())
+        transaction.add(R.id.main_fragment_frame, MainFragment()) // add하면 계속 생성이 되는거 아닌가? replace가 바람직한지 물어보자.
         transaction.commit()
 
         lifecycleScope.launch {
