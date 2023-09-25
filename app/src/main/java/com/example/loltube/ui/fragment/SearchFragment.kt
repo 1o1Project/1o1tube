@@ -83,16 +83,13 @@ class SearchFragment : Fragment() {
         }
     }
 
-    //api 연결하는 부분
-    // 코루틴 스코프 내에서 호출할 비동기 함수를 정의합니다.
+
     private suspend fun fetchItemResults(query: String) {
         try {
             val response: Response<YoutubeVideo> = withContext(Dispatchers.IO) {
-                // Retrofit의 API 호출을 suspend 함수로 래핑하고, await() 확장 함수를 사용하여 비동기 응답을 기다립니다.
                 api.getYouTubeVideos(AUTH_HEADER, query, "videoOrder", "video", 10, "", "snippet")
             }
 
-            // 응답을 처리합니다.
             if (response.isSuccessful) {
                 val youtubeVideo = response.body()
                 youtubeVideo?.items?.forEach { snippet ->
@@ -102,11 +99,9 @@ class SearchFragment : Fragment() {
                 }
             }
 
-            // UI 갱신
             adapter.items = resItems
             adapter.notifyDataSetChanged()
         } catch (e: Exception) {
-            // 오류 처리
             Log.e("#error check", "Error: ${e.message}")
         }
     }
