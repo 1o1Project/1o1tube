@@ -82,19 +82,4 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
-    /**
-     * lifecycleScope.launch {
-     *             SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
-     *                 adapter.setList(it.toMutableList())
-     *             }
-     *             val response = RetrofitInstance.api.getYoutubeTrendVideos(
-     *                 regionCode = Utils().getISORegionCode(),
-     *                 maxResults = 10
-     *             )
-     *             if (response.isSuccessful) {
-     *                 val youtubeVideoInfo = response.body()!!
-     *                 adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
-     *             }
-     *         }
-     */
 
