@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/beaufortforlol_bold"
             android:textSize="35sp"
-            android:textColor="#C89B3C"
+            android:textColor="@color/yellow"
             android:layout_marginLeft="25dp"
             android:text="@string/toolbar_text"
             />
