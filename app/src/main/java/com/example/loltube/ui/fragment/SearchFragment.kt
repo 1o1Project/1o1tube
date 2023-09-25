@@ -25,25 +25,24 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class SearchFragment : Fragment() {
-    private var _binding: FragmentSearchBinding? = null
-    private val binding: FragmentSearchBinding
-        get() = _binding!!
 
+    private lateinit var binding: FragmentSearchBinding
     private lateinit var mConText: Context
     private lateinit var adapter: SearchAdapter
     private lateinit var gridmanager: StaggeredGridLayoutManager
 
-    private val resItems:ArrayList<SearchItemModel> = ArrayList()
+    private val resItems: ArrayList<SearchItemModel> = ArrayList()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mConText = context
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         initView()
 
@@ -51,15 +50,15 @@ class SearchFragment : Fragment() {
     }
 
     private fun initView() {
-        //어댑터 연결
+        //그리드뷰 배치
         gridmanager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.fragmentSearchRecyclerView.layoutManager = gridmanager
 
+        //어댑터 연결
         adapter = SearchAdapter(mConText)
         binding.fragmentSearchRecyclerView.adapter = adapter
 
         //리스너 설정
-
         binding.searchBtn.setOnClickListener {
             val query = binding.keyWord.text.toString()
 
@@ -84,9 +83,10 @@ class SearchFragment : Fragment() {
 
     private suspend fun fetchItemResults(query: String) {
         try {
-            val response = RetrofitInstance.api.getYoutubeTrendVideos(
-                regionCode = Utils().getISORegionCode(),
-                maxResults = 10
+            val response = RetrofitInstance.api.getYouTubeVideos(
+                query = query,
+                maxResults = 20,
+                videoOrder = "relevance"
             )
 
             if (response.isSuccessful) {
@@ -104,11 +104,4 @@ class SearchFragment : Fragment() {
             Log.e("#error check", "Error: ${e.message}")
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
 }
