@@ -3,6 +3,7 @@ package com.example.loltube.ui.fragment.Home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import java.util.concurrent.atomic.AtomicLong
 
 class HomeViewModel(
@@ -12,27 +13,45 @@ class HomeViewModel(
     private val _list: MutableLiveData<List<HomeModel>> = MutableLiveData()
     val list : LiveData<List<HomeModel>> get() = _list
 
-    fun addHomeItems(
-        items: List<HomeModel>?
-    ) {
-        if(items == null) {
-            return
-        }
 
-        val currentList = list.value.orEmpty().toMutableList()
-        currentList.addAll(items)
-        _list.value = currentList
-    }
+//    fun addHomeItems(
+//        items: List<HomeModel>?
+//    ) {
+//        if(items == null) {
+//            return
+//        }
+//
+////        val currentList = list.value.orEmpty().toMutableList()
+////        currentList.addAll(items)
+//        _list.value = items(copy(
+//
+//        ))
+//    }
     fun addHomeItem(
         item: HomeModel?
     ) {
         if(item == null) {
             return
         }
-
-        val currentList = list.value.orEmpty().toMutableList()
-        currentList.add(item)
-        _list.value = currentList
+            val currentList = list.value.orEmpty().toMutableList()
+            currentList.add(item.copy(
+                id = idGenerate.getAndIncrement()
+            ))
+            _list.value = currentList
     }
-
 }
+
+class HomeViewModelFactory : ViewModelProvider.Factory {
+
+    // id 를 부여할 값
+    private val idGenerate = AtomicLong(1L)
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(idGenerate) as T
+        } else {
+            throw IllegalArgumentException("Not found ViewModel class.")
+        }
+    }
+}
+

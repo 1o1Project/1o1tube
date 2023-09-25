@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loltube.R
@@ -17,14 +18,15 @@ import com.example.loltube.util.Utils
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
-    private var _binding : FragmentHomeBinding? = null
-    private val binding : FragmentHomeBinding
-        get() = _binding!!
+    private var _binding: FragmentHomeBinding? = null
+    private val binding: FragmentHomeBinding get() = _binding!!
 
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by lazy {
+        ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
+    }
 
     private val homeAdapter by lazy {
-        HomeAdapter (
+        HomeAdapter(
             onClickItem = { position, item ->
             }
         )
@@ -41,16 +43,20 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-//        initModel()
+        initModel()
     }
 
     private fun initView() = with(binding) {
         recyclerView.adapter = homeAdapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
     }
 
-    private fun initModel() {
+    private fun initModel() = with(viewModel) {
+
+        list.observe(viewLifecycleOwner) {
+            homeAdapter.submitList(it)
+        }
         lifecycleScope.launch {
             val response = RetrofitInstance.api.getYoutubeTrendVideos(
                 regionCode = Utils().getISORegionCode(),
@@ -58,14 +64,15 @@ class HomeFragment : Fragment() {
             )
             if (response.isSuccessful) {
                 val youtubeVideoInfo = response.body()!!
-                viewModel.addHomeItem(
-                    HomeModel(
-                        thumnail = youtubeVideoInfo.items!![0].snippet.thumbnails.medium.url,
-                        title = youtubeVideoInfo.items!![0].snippet.title
-                    )
 
-                )
-                Log.d("youtubeapi", youtubeVideoInfo.items!![0].snippet.description)
+                youtubeVideoInfo.items.orEmpty().forEach {
+                    viewModel.addHomeItem(
+                        HomeModel(
+                            thumnail = it.snippet.thumbnails.medium.url,
+                            title = it.snippet.title
+                        )
+                    )
+                }
             }
         }
     }
@@ -75,3 +82,19 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+    /**
+     * lifecycleScope.launch {
+     *             SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
+     *                 adapter.setList(it.toMutableList())
+     *             }
+     *             val response = RetrofitInstance.api.getYoutubeTrendVideos(
+     *                 regionCode = Utils().getISORegionCode(),
+     *                 maxResults = 10
+     *             )
+     *             if (response.isSuccessful) {
+     *                 val youtubeVideoInfo = response.body()!!
+     *                 adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
+     *             }
+     *         }
+     */
+
