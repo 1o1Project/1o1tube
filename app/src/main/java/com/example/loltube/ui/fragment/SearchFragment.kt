@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.data.RetrofitInstance.api
 import com.example.loltube.databinding.FragmentSearchBinding
 import com.example.loltube.model.SearchItemModel
 import com.example.loltube.model.YoutubeVideo
 import com.example.loltube.ui.adapter.SearchAdapter
 import com.example.loltube.util.Constants.Companion.AUTH_HEADER
+import com.example.loltube.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -33,22 +35,19 @@ class SearchFragment : Fragment() {
 
     private val resItems:ArrayList<SearchItemModel> = ArrayList()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mConText = context
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mConText = context
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initView()
+
+        return binding.root
     }
 
     private fun initView() {
@@ -65,10 +64,9 @@ class SearchFragment : Fragment() {
             val query = binding.keyWord.text.toString()
 
             if (query.isNotEmpty()) {
-                adapter.itemClear()
-
                 GlobalScope.launch(Dispatchers.Main) {
                     val query = query
+                    adapter.itemClear()
                     fetchItemResults(query)
                 }
 
@@ -86,16 +84,17 @@ class SearchFragment : Fragment() {
 
     private suspend fun fetchItemResults(query: String) {
         try {
-            val response: Response<YoutubeVideo> = withContext(Dispatchers.IO) {
-                api.getYouTubeVideos(AUTH_HEADER, query, "videoOrder", "video", 10, "", "snippet")
-            }
+            val response = RetrofitInstance.api.getYoutubeTrendVideos(
+                regionCode = Utils().getISORegionCode(),
+                maxResults = 10
+            )
 
             if (response.isSuccessful) {
-                val youtubeVideo = response.body()
+                val youtubeVideo = response.body()!!
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    resItems.add(SearchItemModel(url, title))
+                    resItems.add(SearchItemModel(title, url))
                 }
             }
 
