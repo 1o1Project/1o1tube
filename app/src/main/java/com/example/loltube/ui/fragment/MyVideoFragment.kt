@@ -48,10 +48,8 @@ class MyVideoFragment : Fragment() {
         binding.mypageFavoriteRv.itemAnimator = null
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
-                    adapter.setList(it.toMutableList())
-                }
+            SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
+                adapter.setList(it.toMutableList())
             }
             val response = RetrofitInstance.api.getYoutubeTrendVideos(
                 regionCode = Utils().getISORegionCode(),

@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="56dp"
                 android:text="유튜브 제목"
+                android:fontFamily="@font/rix_goeb"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +50,7 @@
                 android:layout_height="80dp"
                 android:layout_marginTop="20dp"
                 android:text="유튜브 설명"
+                android:fontFamily="@font/rix_goeb"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mypage_title_txt" />
 
@@ -57,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Favorite Videos"
+                android:fontFamily="@font/rix_goeb"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 app:layout_constraintStart_toStartOf="parent"
