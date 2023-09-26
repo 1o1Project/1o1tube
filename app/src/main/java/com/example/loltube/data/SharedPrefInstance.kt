@@ -3,7 +3,7 @@ package com.example.loltube.data
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.loltube.MyApplication
-import com.example.loltube.model.Snippet
+import com.example.loltube.ui.fragment.Home.HomeModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ class SharedPrefInstance private constructor() {
     private val prefs: SharedPreferences by lazy { application.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE) }
     private val editor: SharedPreferences.Editor by lazy { prefs.edit() }
 
-    suspend fun setBookmarkListPref(values: List<Snippet>) {
+    suspend fun setBookmarkListPref(values: List<HomeModel>) {
         withContext(Dispatchers.IO) {
             val gson = Gson()
             val json = gson.toJson(values)
@@ -28,14 +28,14 @@ class SharedPrefInstance private constructor() {
         }
     }
 
-    suspend fun addBookmarkPref(value: Snippet) {
+    suspend fun addBookmarkPref(value: HomeModel) {
         withContext(Dispatchers.IO) {
             val json = prefs.getString(PREF_KEY, null)
             val gson = Gson()
 
-            val storedData : MutableList<Snippet> = gson.fromJson(json, object : TypeToken<MutableList<Snippet>?>() {}.type) ?: mutableListOf()
+            val storedData : MutableList<HomeModel> = gson.fromJson(json, object : TypeToken<MutableList<HomeModel>?>() {}.type) ?: mutableListOf()
 
-            if (storedData.none { it.title == value.title && it.description == value.description }) {
+            if (storedData.none { it.title == value.title && it.thumnail == value.thumnail }) {
                 storedData.add(value)
 
                 editor.putString(PREF_KEY, gson.toJson(storedData))
@@ -44,13 +44,26 @@ class SharedPrefInstance private constructor() {
         }
     }
 
-    suspend fun deleteBookmarkPref(value: Snippet) {
+    suspend fun isBookmark(value: HomeModel) =
         withContext(Dispatchers.IO) {
             val json = prefs.getString(PREF_KEY, null)
             val gson = Gson()
 
-            val storedData : MutableList<Snippet> = gson.fromJson(json, object : TypeToken<MutableList<Snippet>?>() {}.type) ?: mutableListOf()
-            storedData.remove(storedData.find { it.title == value.title && it.description == value.description })
+            val storedData : MutableList<HomeModel> = gson.fromJson(json, object : TypeToken<MutableList<HomeModel>?>() {}.type) ?: mutableListOf()
+
+            if (storedData.none { it.title == value.title && it.thumnail == value.thumnail }) {
+                return@withContext true
+            }
+            return@withContext false
+        }
+
+    suspend fun deleteBookmarkPref(value: HomeModel) {
+        withContext(Dispatchers.IO) {
+            val json = prefs.getString(PREF_KEY, null)
+            val gson = Gson()
+
+            val storedData : MutableList<HomeModel> = gson.fromJson(json, object : TypeToken<MutableList<HomeModel>?>() {}.type) ?: mutableListOf()
+            storedData.remove(storedData.find { it.title == value.title && it.thumnail == value.thumnail })
 
             editor.putString(PREF_KEY, gson.toJson(storedData))
             editor.apply()
@@ -62,7 +75,7 @@ class SharedPrefInstance private constructor() {
             val json = sharedPreferences.getString(key, null)
             val gson = Gson()
 
-            val storedData : List<Snippet> = gson.fromJson(json, object : TypeToken<List<Snippet>?>() {}.type) ?: mutableListOf()
+            val storedData : List<HomeModel> = gson.fromJson(json, object : TypeToken<List<HomeModel>?>() {}.type) ?: mutableListOf()
             trySend(storedData)
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -70,7 +83,7 @@ class SharedPrefInstance private constructor() {
         val json = prefs.getString(PREF_KEY, null)
         val gson = Gson()
 
-        val storedData : List<Snippet> = gson.fromJson(json, object : TypeToken<List<Snippet>?>() {}.type) ?: mutableListOf()
+        val storedData : List<HomeModel> = gson.fromJson(json, object : TypeToken<List<HomeModel>?>() {}.type) ?: mutableListOf()
         send(storedData)
 
         awaitClose {
