@@ -22,6 +22,18 @@ import com.example.loltube.util.Utils
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
+
+//    companion object {
+//        fun newInstance(item: LOLModel?) : Fragment {
+//            val bundle = Bundle()
+//            bundle.putParcelable(EXTRA_ITEM, item)
+//
+//            val fragment = VideoDetailFragment()
+//            fragment.arguments = bundle
+//            return fragment
+//        }
+//    }
+
     private var _binding: FragmentHomeBinding? = null
     private val binding: FragmentHomeBinding get() = _binding!!
 
@@ -32,16 +44,15 @@ class HomeFragment : Fragment() {
     private val homeAdapter by lazy {
         HomeAdapter(
             onClickItem = { position, item ->
-
                 val bundle = Bundle()
                 bundle.putParcelable(EXTRA_ITEM, item)
 
                 VideoDetailFragment().arguments = bundle
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame,VideoDetailFragment())
+                    .add(R.id.main_fragment_frame, VideoDetailFragment())
                     .addToBackStack(null)
                     .commit()
-                }
+            }
         )
     }
 
@@ -70,22 +81,14 @@ class HomeFragment : Fragment() {
         recyclerView3.adapter = homeAdapter
         recyclerView3.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
-        val spinner: Spinner = binding.planetsSpinner// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.planets_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spinner.adapter = adapter
-        }
-
 
     }
 
     private fun initModel() = with(viewModel) {
+
+        binding.homeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, category ->
+            // use category text with API
+        }
 
         list.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it)
