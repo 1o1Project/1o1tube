@@ -6,7 +6,6 @@
     android:background="@color/dark_blue"
     android:orientation="vertical">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,67 +15,87 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_most_popular_videos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:textSize="25sp"
-        android:textColor="@color/yellow"
-        android:text="@string/home_most_popular_videos"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        <TextView
+            android:id="@+id/tv_most_popular_videos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/beaufortforlol_bold"
+            android:layout_marginBottom="10dp"
+            android:textSize="25sp"
+            android:textColor="@color/yellow"
+            android:text="@string/home_most_popular_videos"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="387dp"
-        android:layout_height="250dp"
-        android:layout_marginHorizontal="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_most_popular_videos" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="387dp"
+            android:layout_height="250dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_most_popular_videos" />
 
-    <Spinner
-        android:id="@+id/planets_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view"
-        />
+        <com.skydoves.powerspinner.PowerSpinnerView
+            android:id="@+id/home_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dark_blue"
+            android:gravity="start"
+            android:hint="@string/home_category_hint"
+            android:padding="10dp"
+            android:textColor="@color/yellow"
+            android:textColorHint="@color/yellow"
+            android:textSize="23sp"
+            android:fontFamily="@font/beaufortforlol_bold"
+            app:spinner_arrow_gravity="start"
+            app:spinner_arrow_padding="8dp"
+            app:spinner_divider_color="@color/dark_blue"
+            app:spinner_divider_show="false"
+            app:spinner_divider_size="0dp"
+            app:spinner_item_array="@array/spinner_array"
+            app:spinner_item_height="50dp"
+            app:spinner_popup_animation="normal"
+            app:spinner_popup_background="@color/blue"
+            app:spinner_popup_elevation="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+            />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view2"
-        android:layout_width="387dp"
-        android:layout_height="250dp"
-        android:layout_marginHorizontal="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/planets_spinner" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view2"
+            android:layout_width="387dp"
+            android:layout_height="250dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_spinner" />
 
-    <TextView
-        android:id="@+id/tv_channelByCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:textColor="@color/yellow"
-        android:text="@string/channels_by_category"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view2"/>
+        <TextView
+            android:id="@+id/tv_channel_by_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:textColor="@color/yellow"
+            android:fontFamily="@font/beaufortforlol_bold"
+            android:text="@string/channels_by_category"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view2"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view3"
-        android:layout_width="387dp"
-        android:layout_height="250dp"
-        android:layout_marginHorizontal="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_channelByCategory" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view3"
+            android:layout_width="387dp"
+            android:layout_height="250dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_channel_by_category" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

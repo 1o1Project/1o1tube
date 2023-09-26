@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.loltube.databinding.FragmentVideoDetailBinding
+import com.example.loltube.model.LOLModel
+import com.example.loltube.util.Constants
 
 class VideoDetailFragment : Fragment() {
+
 
     private var _binding : FragmentVideoDetailBinding? = null
     private val binding : FragmentVideoDetailBinding

@@ -44,7 +44,6 @@ class HomeViewModel(
 
 class HomeViewModelFactory : ViewModelProvider.Factory {
 
-    // id 를 부여할 값
     private val idGenerate = AtomicLong(1L)
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
