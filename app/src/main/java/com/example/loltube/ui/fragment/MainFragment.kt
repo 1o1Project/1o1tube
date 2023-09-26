@@ -39,6 +39,7 @@ class MainFragment : Fragment() {
 
     private fun initView() {
         binding.mainViewpager.adapter = adapter
+        binding.mainViewpager.isUserInputEnabled = false
 
         TabLayoutMediator(binding.mainTabLayout, binding.mainViewpager) { tab, position ->
             tab.text = title[position]

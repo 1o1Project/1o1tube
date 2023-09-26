@@ -53,6 +53,14 @@ class HomeAdapter(
                 .into(homeThumnail)
 
             homeTitle.text = item.title
+
+            container.setOnClickListener {
+                onClickItem(
+                    adapterPosition,
+                    item)
+            }
         }
+
+
     }
 }
