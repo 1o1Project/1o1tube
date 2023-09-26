@@ -10,10 +10,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loltube.databinding.SearchItemBinding
-import com.example.loltube.model.SearchItemModel
+import com.example.loltube.model.LOLModel
 
 class SearchAdapter(private val mContext: Context) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
-    var items = ArrayList<SearchItemModel>()
+    var items = ArrayList<LOLModel>()
 
     fun itemClear() {
         items.clear()
@@ -31,7 +31,7 @@ class SearchAdapter(private val mContext: Context) : RecyclerView.Adapter<Search
         val currentItem = items[position]
 
         Glide.with(mContext)
-            .load(currentItem.url)
+            .load(currentItem.thumbnail)
             .into(holder.thumbNailImage)
 
         holder.title.text = currentItem.title

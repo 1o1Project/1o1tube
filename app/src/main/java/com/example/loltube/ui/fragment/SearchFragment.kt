@@ -11,18 +11,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.loltube.data.RetrofitInstance
-import com.example.loltube.data.RetrofitInstance.api
 import com.example.loltube.databinding.FragmentSearchBinding
-import com.example.loltube.model.SearchItemModel
-import com.example.loltube.model.YoutubeVideo
+import com.example.loltube.model.LOLModel
 import com.example.loltube.ui.adapter.SearchAdapter
-import com.example.loltube.util.Constants.Companion.AUTH_HEADER
-import com.example.loltube.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 class SearchFragment : Fragment() {
 
@@ -31,7 +25,7 @@ class SearchFragment : Fragment() {
     private lateinit var adapter: SearchAdapter
     private lateinit var gridmanager: StaggeredGridLayoutManager
 
-    private val resItems: ArrayList<SearchItemModel> = ArrayList()
+    private val resItems: ArrayList<LOLModel> = ArrayList()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -94,7 +88,7 @@ class SearchFragment : Fragment() {
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    resItems.add(SearchItemModel(title, url))
+                    resItems.add(LOLModel(title = title, thumbnail = url))
                 }
             }
 

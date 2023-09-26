@@ -7,23 +7,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loltube.databinding.HomeItemBinding
-import com.example.loltube.ui.fragment.Home.HomeModel
+import com.example.loltube.model.LOLModel
 
 class HomeAdapter(
-    private val onClickItem: (Int, HomeModel) -> Unit,
-) : ListAdapter<HomeModel, HomeAdapter.ViewHolder>(
+    private val onClickItem: (Int, LOLModel) -> Unit,
+) : ListAdapter<LOLModel, HomeAdapter.ViewHolder>(
 
-    object : DiffUtil.ItemCallback<HomeModel>() {
+    object : DiffUtil.ItemCallback<LOLModel>() {
         override fun areItemsTheSame(
-            oldItem: HomeModel,
-            newItem: HomeModel
+            oldItem: LOLModel,
+            newItem: LOLModel
         ): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: HomeModel,
-            newItem: HomeModel
+            oldItem: LOLModel,
+            newItem: LOLModel
         ): Boolean {
             return oldItem == newItem
         }
@@ -44,12 +44,12 @@ class HomeAdapter(
 
     class ViewHolder(
         private val binding: HomeItemBinding,
-        private val onClickItem: (Int, HomeModel) -> Unit
+        private val onClickItem: (Int, LOLModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: HomeModel) = with(binding) {
+        fun bind(item: LOLModel) = with(binding) {
             Glide.with(root)
-                .load(item.thumnail)
+                .load(item.thumbnail)
                 .into(homeThumnail)
 
             homeTitle.text = item.title
