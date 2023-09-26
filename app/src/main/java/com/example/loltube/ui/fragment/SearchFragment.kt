@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.data.RetrofitInstance.api
 import com.example.loltube.databinding.FragmentSearchBinding
 import com.example.loltube.model.SearchItemModel
 import com.example.loltube.model.YoutubeVideo
 import com.example.loltube.ui.adapter.SearchAdapter
 import com.example.loltube.util.Constants.Companion.AUTH_HEADER
+import com.example.loltube.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,52 +25,47 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class SearchFragment : Fragment() {
-    private var _binding: FragmentSearchBinding? = null
-    private val binding: FragmentSearchBinding
-        get() = _binding!!
 
+    private lateinit var binding: FragmentSearchBinding
     private lateinit var mConText: Context
     private lateinit var adapter: SearchAdapter
     private lateinit var gridmanager: StaggeredGridLayoutManager
 
-    private val resItems:ArrayList<SearchItemModel> = ArrayList()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val resItems: ArrayList<SearchItemModel> = ArrayList()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mConText = context
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+
         initView()
+
+        return binding.root
     }
 
     private fun initView() {
-        //어댑터 연결
+        //그리드뷰 배치
         gridmanager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.fragmentSearchRecyclerView.layoutManager = gridmanager
 
+        //어댑터 연결
         adapter = SearchAdapter(mConText)
         binding.fragmentSearchRecyclerView.adapter = adapter
 
         //리스너 설정
-
         binding.searchBtn.setOnClickListener {
             val query = binding.keyWord.text.toString()
 
             if (query.isNotEmpty()) {
-                adapter.itemClear()
-
                 GlobalScope.launch(Dispatchers.Main) {
                     val query = query
+                    adapter.itemClear()
                     fetchItemResults(query)
                 }
 
@@ -86,16 +83,18 @@ class SearchFragment : Fragment() {
 
     private suspend fun fetchItemResults(query: String) {
         try {
-            val response: Response<YoutubeVideo> = withContext(Dispatchers.IO) {
-                api.getYouTubeVideos(AUTH_HEADER, query, "videoOrder", "video", 10, "", "snippet")
-            }
+            val response = RetrofitInstance.api.getYouTubeVideos(
+                query = query,
+                maxResults = 30,
+                videoOrder = "relevance"
+            )
 
             if (response.isSuccessful) {
-                val youtubeVideo = response.body()
+                val youtubeVideo = response.body()!!
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    resItems.add(SearchItemModel(url, title))
+                    resItems.add(SearchItemModel(title, url))
                 }
             }
 
@@ -105,11 +104,4 @@ class SearchFragment : Fragment() {
             Log.e("#error check", "Error: ${e.message}")
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
 }
