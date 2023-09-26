@@ -85,7 +85,7 @@ class SearchFragment : Fragment() {
         try {
             val response = RetrofitInstance.api.getYouTubeVideos(
                 query = query,
-                maxResults = 20,
+                maxResults = 30,
                 videoOrder = "relevance"
             )
 
