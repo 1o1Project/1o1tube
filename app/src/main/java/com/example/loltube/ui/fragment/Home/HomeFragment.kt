@@ -1,15 +1,14 @@
 package com.example.loltube.ui.fragment.Home
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.Spinner
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +17,8 @@ import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.databinding.FragmentHomeBinding
 import com.example.loltube.ui.adapter.HomeAdapter
+import com.example.loltube.ui.fragment.VideoDetailFragment
+import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
 import com.example.loltube.util.Utils
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,16 @@ class HomeFragment : Fragment() {
     private val homeAdapter by lazy {
         HomeAdapter(
             onClickItem = { position, item ->
-            }
+
+                val bundle = Bundle()
+                bundle.putParcelable(EXTRA_ITEM, item)
+
+                VideoDetailFragment().arguments = bundle
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_frame,VideoDetailFragment())
+                    .addToBackStack(null)
+                    .commit()
+                }
         )
     }
 
@@ -67,6 +77,7 @@ class HomeFragment : Fragment() {
             spinner.adapter = adapter
         }
 
+
     }
 
     private fun initModel() = with(viewModel) {
@@ -89,6 +100,7 @@ class HomeFragment : Fragment() {
                             title = it.snippet.title
                         )
                     )
+
                 }
             }
         }
