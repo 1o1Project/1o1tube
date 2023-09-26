@@ -51,13 +51,15 @@ class MyVideoFragment : Fragment() {
             //SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
             //    adapter.setList(it.toMutableList())
             //}
-            val response = RetrofitInstance.api.getYoutubeTrendVideos(
-                regionCode = Utils().getISORegionCode(),
-                maxResults = 10
-            )
-            if (response.isSuccessful) {
-                val youtubeVideoInfo = response.body()!!
-                adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val response = RetrofitInstance.api.getYoutubeTrendVideos(
+                    regionCode = Utils().getISORegionCode(),
+                    maxResults = 10
+                )
+                if (response.isSuccessful) {
+                    val youtubeVideoInfo = response.body()!!
+                    adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
+                }
             }
         }
     }
