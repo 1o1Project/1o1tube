@@ -14,6 +14,9 @@ class HomeViewModel(
     private val _list: MutableLiveData<List<LOLModel>> = MutableLiveData()
     val list : LiveData<List<LOLModel>> get() = _list
 
+    private val _listForCategory: MutableLiveData<List<LOLModel>> = MutableLiveData()
+    val listForCategory : LiveData<List<LOLModel>> get() = _listForCategory
+
 //    fun addHomeItems(
 //        items: List<HomeModel>?
 //    ) {
@@ -39,6 +42,25 @@ class HomeViewModel(
                 id = idGenerate.getAndIncrement()
             ))
             _list.value = currentList
+    }
+
+    fun addCategoryItem(
+        item: LOLModel?
+    ) {
+        if(item == null) {
+            return
+        }
+            val currentList = listForCategory.value.orEmpty().toMutableList()
+            currentList.add(item.copy(
+                id = idGenerate.getAndIncrement()
+            ))
+            _listForCategory.value = currentList
+    }
+
+    fun cleareCategoryItem() {
+        val currentList = listForCategory.value.orEmpty().toMutableList()
+        currentList.clear()
+        _listForCategory.value = currentList
     }
 }
 

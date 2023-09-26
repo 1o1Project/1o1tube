@@ -1,5 +1,6 @@
 package com.example.loltube.data
 
+import com.example.loltube.model.LOLModel
 import com.example.loltube.model.YoutubeChannelInfo
 import com.example.loltube.model.YoutubeVideo
 import com.example.loltube.model.YoutubeVideoInfo
@@ -49,10 +50,23 @@ interface YoutubeApiService {
         @Query("part") part: String = "snippet, contentDetails, statistics",
     ): Response<YoutubeVideoInfo>
 
+    @GET("videos")
+    suspend fun getYoutubeMostPopular(
+        @Query("part") part: String = "snippet",
+        @Query("chart") chart: String = "mostPopular",
+        @Query("regionCode") regionCode: String = "KR",
+        @Query("videoCategoryId") videoCategoryId: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("key") apiKey: String = AUTH_HEADER
+    ): Response<YoutubeVideoInfo>
+
     @GET("channels")
     suspend fun getYoutubeChannelInfo(
         @Query("key") apiKey: String = AUTH_HEADER,
         @Query("id") channelId: String,
         @Query("part") part: String = "snippet",
     ): Response<YoutubeChannelInfo>
+
+
+
 }

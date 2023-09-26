@@ -52,6 +52,9 @@ data class Id(
 )
 
 data class Snippet(
+    @Expose
+    @SerializedName("categoryId")
+    val categoryId: String,
     @SerializedName("publishedAt")
     @Expose
     val publishedAt: String,
