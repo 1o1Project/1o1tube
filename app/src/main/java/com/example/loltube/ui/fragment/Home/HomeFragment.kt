@@ -65,6 +65,12 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 //        recyclerView.layoutManager = LinearLayoutManager(context)
 
+        recyclerView2.adapter = homeAdapter
+        recyclerView2.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+
+        recyclerView3.adapter = homeAdapter
+        recyclerView3.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+
         val spinner: Spinner = binding.planetsSpinner// Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             requireContext(),
@@ -100,7 +106,6 @@ class HomeFragment : Fragment() {
                             title = it.snippet.title
                         )
                     )
-
                 }
             }
         }
