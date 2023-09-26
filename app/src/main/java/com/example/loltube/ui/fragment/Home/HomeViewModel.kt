@@ -14,7 +14,6 @@ class HomeViewModel(
     private val _list: MutableLiveData<List<LOLModel>> = MutableLiveData()
     val list : LiveData<List<LOLModel>> get() = _list
 
-
 //    fun addHomeItems(
 //        items: List<HomeModel>?
 //    ) {
@@ -28,6 +27,7 @@ class HomeViewModel(
 //
 //        ))
 //    }
+
     fun addHomeItem(
         item: LOLModel?
     ) {
