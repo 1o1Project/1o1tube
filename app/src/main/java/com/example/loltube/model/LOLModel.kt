@@ -1,11 +1,11 @@
-package com.example.loltube.ui.fragment.Home
+package com.example.loltube.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class HomeModel(
+data class LOLModel (
     val id: Long? = -1,
-    val thumnail: String?,
+    val thumbnail: String?,
     val title: String?
 ) : Parcelable

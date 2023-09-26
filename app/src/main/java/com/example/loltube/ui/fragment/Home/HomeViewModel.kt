@@ -4,14 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.loltube.model.LOLModel
 import java.util.concurrent.atomic.AtomicLong
 
 class HomeViewModel(
     private val idGenerate: AtomicLong
 ) : ViewModel() {
 
-    private val _list: MutableLiveData<List<HomeModel>> = MutableLiveData()
-    val list : LiveData<List<HomeModel>> get() = _list
+    private val _list: MutableLiveData<List<LOLModel>> = MutableLiveData()
+    val list : LiveData<List<LOLModel>> get() = _list
 
 
 //    fun addHomeItems(
@@ -28,7 +29,7 @@ class HomeViewModel(
 //        ))
 //    }
     fun addHomeItem(
-        item: HomeModel?
+        item: LOLModel?
     ) {
         if(item == null) {
             return
