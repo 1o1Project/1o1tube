@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="spinner_array">
-        <item>영화</item>
-        <item>스포츠</item>
-        <item>게임</item>
         <item>자동차</item>
+        <item>스포츠</item>
+        <item>음악</item>
+        <item>코미디</item>
     </string-array>
 </resources>

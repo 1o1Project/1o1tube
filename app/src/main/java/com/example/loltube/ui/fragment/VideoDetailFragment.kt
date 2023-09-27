@@ -11,10 +11,20 @@ import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.loltube.databinding.FragmentVideoDetailBinding
 import com.example.loltube.model.LOLModel
-
 import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
 
 class VideoDetailFragment : Fragment() {
+
+    companion object {
+        fun newInstance(item: LOLModel?) : Fragment{
+            val bundle = Bundle()
+            bundle.putParcelable(EXTRA_ITEM, item)
+
+            val fragment = VideoDetailFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
 
     private var item : LOLModel? = null
 

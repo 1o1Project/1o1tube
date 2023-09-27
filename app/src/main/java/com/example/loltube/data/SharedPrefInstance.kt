@@ -97,7 +97,7 @@ class SharedPrefInstance private constructor() {
 
         fun getInstance() : SharedPrefInstance {
             return instance ?: synchronized(this) {
-                instance ?: SharedPrefInstance().also {
+                    instance ?: SharedPrefInstance().also {
                     instance = it
                 }
             }
