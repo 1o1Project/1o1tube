@@ -115,7 +115,8 @@ class HomeFragment : Fragment() {
                     viewModel.addCategoryItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title
+                            title = it.snippet.title,
+                            description = it.snippet.description
                         )
                     )
                 }
@@ -141,7 +142,8 @@ class HomeFragment : Fragment() {
                     viewModel.addChannelItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title
+                            title = it.snippet.title,
+                            description = it.snippet.description
                         )
                     )
                 }
@@ -196,7 +198,8 @@ class HomeFragment : Fragment() {
                     viewModel.addPopularItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title
+                            title = it.snippet.title,
+                            description = it.snippet.description
                         )
                     )
                 }
