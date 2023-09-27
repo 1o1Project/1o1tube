@@ -11,56 +11,59 @@ class HomeViewModel(
     private val idGenerate: AtomicLong
 ) : ViewModel() {
 
-    private val _list: MutableLiveData<List<LOLModel>> = MutableLiveData()
-    val list : LiveData<List<LOLModel>> get() = _list
+    private val _listForPopular: MutableLiveData<List<LOLModel>> = MutableLiveData()
+    val listForPopular: LiveData<List<LOLModel>> get() = _listForPopular
 
     private val _listForCategory: MutableLiveData<List<LOLModel>> = MutableLiveData()
-    val listForCategory : LiveData<List<LOLModel>> get() = _listForCategory
+    val listForCategory: LiveData<List<LOLModel>> get() = _listForCategory
 
-//    fun addHomeItems(
-//        items: List<HomeModel>?
-//    ) {
-//        if(items == null) {
-//            return
-//        }
-//
-////        val currentList = list.value.orEmpty().toMutableList()
-////        currentList.addAll(items)
-//        _list.value = items(copy(
-//
-//        ))
-//    }
+    private val _listForChannel: MutableLiveData<List<LOLModel>> = MutableLiveData()
+    val listForChannel: LiveData<List<LOLModel>> get() = _listForChannel
 
-    fun addHomeItem(
+    fun addPopularItem(
         item: LOLModel?
     ) {
-        if(item == null) {
+        if (item == null) {
             return
         }
-            val currentList = list.value.orEmpty().toMutableList()
-            currentList.add(item.copy(
+        val currentList = listForPopular.value.orEmpty().toMutableList()
+        currentList.add(
+            item.copy(
                 id = idGenerate.getAndIncrement()
-            ))
-            _list.value = currentList
+            )
+        )
+        _listForPopular.value = currentList
     }
 
     fun addCategoryItem(
         item: LOLModel?
     ) {
-        if(item == null) {
+        if (item == null) {
             return
         }
-            val currentList = listForCategory.value.orEmpty().toMutableList()
-            currentList.add(item.copy(
+        val currentList = listForCategory.value.orEmpty().toMutableList()
+        currentList.add(
+            item.copy(
                 id = idGenerate.getAndIncrement()
-            ))
-            _listForCategory.value = currentList
+            )
+        )
+        _listForCategory.value = currentList
     }
 
-    fun cleareCategoryItem() {
+    fun clearCategoryItem() {
         val currentList = listForCategory.value.orEmpty().toMutableList()
         currentList.clear()
         _listForCategory.value = currentList
+    }
+
+    fun addChannelItem(item: LOLModel) {
+        val currentList = listForChannel.value.orEmpty().toMutableList()
+        currentList.add(
+            item.copy(
+                id = idGenerate.getAndIncrement()
+            )
+        )
+        _listForChannel.value = currentList
     }
 }
 

@@ -51,7 +51,7 @@
             android:textColorHint="@color/yellow"
             android:textSize="23sp"
             android:fontFamily="@font/beaufortforlol_bold"
-            app:spinner_arrow_gravity="start"
+            app:spinner_arrow_gravity="end"
             app:spinner_arrow_padding="8dp"
             app:spinner_divider_color="@color/dark_blue"
             app:spinner_divider_show="false"

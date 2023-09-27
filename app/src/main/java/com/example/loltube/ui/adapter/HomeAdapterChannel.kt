@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.loltube.databinding.HomeItemBinding
+import com.example.loltube.databinding.HomeItem2Binding
 import com.example.loltube.model.LOLModel
 
 class HomeAdapterChannel(
@@ -32,7 +32,7 @@ class HomeAdapterChannel(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapterChannel.ViewHolder {
         return ViewHolder(
-            HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            HomeItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClickItem
         )
     }
@@ -43,16 +43,16 @@ class HomeAdapterChannel(
     }
 
     class ViewHolder(
-        private val binding: HomeItemBinding,
+        private val binding: HomeItem2Binding,
         private val onClickItem: (Int, LOLModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: LOLModel) = with(binding) {
             Glide.with(root)
                 .load(item.thumbnail)
-                .into(homeThumnail)
+                .into(channelThumbnail)
 
-            homeTitle.text = item.title
+            channelTitle.text = item.title
 
             container.setOnClickListener {
                 onClickItem(

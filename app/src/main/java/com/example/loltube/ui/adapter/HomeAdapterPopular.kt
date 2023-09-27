@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.loltube.R
 import com.example.loltube.databinding.HomeItemBinding
 import com.example.loltube.model.LOLModel
 

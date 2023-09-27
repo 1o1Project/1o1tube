@@ -33,6 +33,15 @@ interface YoutubeApiService {
         @Query("channelId") channelId: String = "",
         @Query("part") part: String = "snippet",
     ): Response<YoutubeVideo>
+    @GET("search")
+    suspend fun getYoutubeChannel(
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("q") query: String,
+        @Query("type") videoType: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("reginCode") regionCode: String,
+        @Query("part") part: String = "snippet",
+    ): Response<YoutubeVideo>
 
     @GET("videos")
     suspend fun getVideoInfo(
