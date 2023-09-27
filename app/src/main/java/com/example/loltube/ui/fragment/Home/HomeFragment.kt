@@ -42,14 +42,8 @@ class HomeFragment : Fragment() {
     private val categoryAdpater by lazy {
         HomeAdapterCategory(
             onClickItem = { position, item ->
-                val bundle = Bundle()
-                bundle.putParcelable(EXTRA_ITEM, item)
-
-                val videoDetailFragment = VideoDetailFragment()
-                videoDetailFragment.arguments = bundle
-
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame, videoDetailFragment)
+                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
                     .commit()
             }
@@ -58,14 +52,18 @@ class HomeFragment : Fragment() {
     private val channelAdapter by lazy {
         HomeAdapterChannel(
             onClickItem = { position, item ->
-                val bundle = Bundle()
-                bundle.putParcelable(EXTRA_ITEM, item)
-
-                val videoDetailFragment = VideoDetailFragment()
-                videoDetailFragment.arguments = bundle
-
+//                val bundle = Bundle()
+//                bundle.putParcelable(EXTRA_ITEM, item)
+//
+//                val videoDetailFragment = VideoDetailFragment()
+//                videoDetailFragment.arguments = bundle
+//
+//                parentFragmentManager.beginTransaction()
+//                    .add(R.id.main_fragment_frame, videoDetailFragment)
+//                    .addToBackStack(null)
+//                    .commit()
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame, videoDetailFragment)
+                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
                     .commit()
             }

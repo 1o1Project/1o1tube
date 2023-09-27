@@ -44,14 +44,12 @@ class VideoDetailFragment : Fragment() {
     }
 
     private fun initView() {
-        val item = arguments?.getString("test")
-        val item2 = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable(EXTRA_ITEM,LOLModel::class.java)
         } else {
             TODO("VERSION.SDK_INT < TIRAMISU")
         }
-        Log.d("choco5732" , "${item2!!.thumbnail}")
-        //do something
+        Log.d("choco5732" , "${item!!.title}")
     }
 
     override fun onDestroyView() {
