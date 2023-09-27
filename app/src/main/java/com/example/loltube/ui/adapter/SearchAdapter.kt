@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.loltube.R
 import com.example.loltube.databinding.SearchItemBinding
 import com.example.loltube.model.LOLModel
 
@@ -34,13 +35,15 @@ class SearchAdapter(private val context: Context) : RecyclerView.Adapter<SearchA
 
         Glide.with(context)
             .load(currentItem.thumbnail)
+            .placeholder(R.drawable.ic_downloading)
             .into(holder.thumbNailImage)
+
 
         holder.title.text = currentItem.title
 
     }
 
-    inner class ItemViewHolder(binding: SearchItemBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+    inner class ItemViewHolder(var binding: SearchItemBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         var thumbNailImage: ImageView = binding.searchThumbnail
         var title: TextView = binding.searchTitle

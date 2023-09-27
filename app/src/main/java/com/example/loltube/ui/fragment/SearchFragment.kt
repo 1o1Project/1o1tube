@@ -83,6 +83,8 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     }
 
 
+    private lateinit var currenttoken : String
+
     //유튜브 검색 API
     private suspend fun fetchItemResults(query: String) {
         try {
@@ -100,6 +102,8 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                     resItems.add(LOLModel(title = title, thumbnail = url))
                 }
             }
+
+            currenttoken = response.body()!!.nextPageToken
 
             adapter.items = resItems
 
@@ -164,10 +168,11 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = RetrofitInstance.api.getYouTubeVideos(
+                val response = RetrofitInstance.api.getYouTubeMoreVideos(
                     query = query,
                     maxResults = 10,
-                    videoOrder = "relevance"
+                    videoOrder = "relevance",
+                    nextPageToken = currenttoken
                 )
 
                 if (response.isSuccessful) {
@@ -180,7 +185,11 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
 
                     // 새로운 데이터를 RecyclerView에 추가
                     adapter.notifyDataSetChanged()
+
+                    currenttoken = response.body()!!.nextPageToken
+
                     isLoading = false
+
                 }
             } catch (e: Exception) {
                 // 네트워크 오류 예외처리
