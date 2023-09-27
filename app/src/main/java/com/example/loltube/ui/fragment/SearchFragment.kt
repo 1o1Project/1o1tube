@@ -95,7 +95,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    resItems.add(LOLModel(title = title, thumbnail = url))
+                    resItems.add(LOLModel(title = title, thumbnail = url, description =  null))
                 }
             }
 
