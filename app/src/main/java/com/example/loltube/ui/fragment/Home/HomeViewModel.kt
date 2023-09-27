@@ -49,13 +49,6 @@ class HomeViewModel(
         )
         _listForCategory.value = currentList
     }
-
-    fun clearCategoryItem() {
-        val currentList = listForCategory.value.orEmpty().toMutableList()
-        currentList.clear()
-        _listForCategory.value = currentList
-    }
-
     fun addChannelItem(item: LOLModel) {
         val currentList = listForChannel.value.orEmpty().toMutableList()
         currentList.add(
@@ -65,6 +58,19 @@ class HomeViewModel(
         )
         _listForChannel.value = currentList
     }
+
+    fun clearCategory() {
+        val currentList = listForCategory.value.orEmpty().toMutableList()
+        currentList.clear()
+        _listForCategory.value = currentList
+    }
+    fun clearChannel() {
+        val currentList = listForChannel.value.orEmpty().toMutableList()
+        currentList.clear()
+        _listForChannel.value = currentList
+    }
+
+
 }
 
 class HomeViewModelFactory : ViewModelProvider.Factory {

@@ -110,7 +110,7 @@ class HomeFragment : Fragment() {
 
             if (response.isSuccessful) {
                 val youtubeCategory = response.body()!!
-                viewModel.clearCategoryItem()
+                viewModel.clearCategory()
                 youtubeCategory.items.orEmpty().forEach {
                     viewModel.addCategoryItem(
                         LOLModel(
@@ -136,7 +136,7 @@ class HomeFragment : Fragment() {
 
             if (response.isSuccessful) {
                 val youtubeVideoInfo = response.body()!!
-
+                viewModel.clearChannel()
                 youtubeVideoInfo.items.orEmpty().forEach {
                     viewModel.addChannelItem(
                         LOLModel(
