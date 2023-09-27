@@ -9,9 +9,9 @@ import com.bumptech.glide.Glide
 import com.example.loltube.databinding.HomeItemBinding
 import com.example.loltube.model.LOLModel
 
-class HomeAdapter(
+class HomeAdapterCategory(
     private val onClickItem: (Int, LOLModel) -> Unit,
-) : ListAdapter<LOLModel, HomeAdapter.ViewHolder>(
+) : ListAdapter<LOLModel, HomeAdapterCategory.ViewHolder>(
 
     object : DiffUtil.ItemCallback<LOLModel>() {
         override fun areItemsTheSame(
@@ -30,14 +30,14 @@ class HomeAdapter(
     }
 ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapterCategory.ViewHolder {
         return ViewHolder(
             HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClickItem
         )
     }
 
-    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HomeAdapterCategory.ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
     }

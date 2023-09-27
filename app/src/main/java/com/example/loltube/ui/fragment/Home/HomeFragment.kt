@@ -1,12 +1,9 @@
 package com.example.loltube.ui.fragment.Home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,24 +13,14 @@ import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.databinding.FragmentHomeBinding
 import com.example.loltube.model.LOLModel
-import com.example.loltube.ui.adapter.HomeAdapter
+import com.example.loltube.ui.adapter.HomeAdapterCategory
+import com.example.loltube.ui.adapter.HomeAdapterChannel
+import com.example.loltube.ui.adapter.HomeAdapterPopular
 import com.example.loltube.ui.fragment.VideoDetailFragment
 import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
-import com.example.loltube.util.Utils
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
-
-//    companion object {
-//        fun newInstance(item: LOLModel?) : Fragment {
-//            val bundle = Bundle()
-//            bundle.putParcelable(EXTRA_ITEM, item)
-//
-//            val fragment = VideoDetailFragment()
-//            fragment.arguments = bundle
-//            return fragment
-//        }
-//    }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding: FragmentHomeBinding get() = _binding!!
@@ -42,22 +29,49 @@ class HomeFragment : Fragment() {
         ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
     }
 
-    private val homeAdapter by lazy {
-        HomeAdapter(
+    private val popularAdpater by lazy {
+        
+        HomeAdapterPopular(
             onClickItem = { position, item ->
-                val bundle = Bundle()
-                bundle.putParcelable(EXTRA_ITEM, item)
-                Log.d("item",item.toString())
-
-                val fragment = VideoDetailFragment()
-                fragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame,fragment)
+                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
                     .commit()
             }
         )
     }
+
+    private val categoryAdpater by lazy {
+        HomeAdapterCategory(
+            onClickItem = { position, item ->
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
+    }
+    private val channelAdapter by lazy {
+        HomeAdapterChannel(
+            onClickItem = { position, item ->
+//                val bundle = Bundle()
+//                bundle.putParcelable(EXTRA_ITEM, item)
+//
+//                val videoDetailFragment = VideoDetailFragment()
+//                videoDetailFragment.arguments = bundle
+//
+//                parentFragmentManager.beginTransaction()
+//                    .add(R.id.main_fragment_frame, videoDetailFragment)
+//                    .addToBackStack(null)
+//                    .commit()
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,38 +88,114 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        recyclerView.adapter = homeAdapter
+        recyclerView.adapter = popularAdpater
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-//        recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerView2.adapter = homeAdapter
+        recyclerView2.adapter = categoryAdpater
         recyclerView2.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
-        recyclerView3.adapter = homeAdapter
+        recyclerView3.adapter = channelAdapter
         recyclerView3.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
 
     }
 
+    // 카테고리
+    private fun setCategoryItem(category: String) {
+        lifecycleScope.launch() {
+            val response = RetrofitInstance.api.getYoutubeMostPopular(
+                videoCategoryId = category,
+                maxResults = 15
+            )
+
+            if (response.isSuccessful) {
+                val youtubeCategory = response.body()!!
+                viewModel.clearCategory()
+                youtubeCategory.items.orEmpty().forEach {
+                    viewModel.addCategoryItem(
+                        LOLModel(
+                            thumbnail = it.snippet.thumbnails.medium.url,
+                            title = it.snippet.title,
+                            description = it.snippet.description
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    // 채널
+    private fun setChannelItem(query: String) {
+        lifecycleScope.launch {
+            val response = RetrofitInstance.api.getYoutubeChannel(
+                query = query,
+                videoType = "channel",
+                maxResults = 15,
+                regionCode = "KR",
+                part = "snippet"
+            )
+
+            if (response.isSuccessful) {
+                val youtubeVideoInfo = response.body()!!
+                viewModel.clearChannel()
+                youtubeVideoInfo.items.orEmpty().forEach {
+                    viewModel.addChannelItem(
+                        LOLModel(
+                            thumbnail = it.snippet.thumbnails.medium.url,
+                            title = it.snippet.title,
+                            description = it.snippet.description
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private fun initModel() = with(viewModel) {
 
-        binding.homeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, category ->
-            // use category text with API
+
+        listForPopular.observe(viewLifecycleOwner) {
+            popularAdpater.submitList(it)
+        }
+        listForCategory.observe(viewLifecycleOwner) {
+            categoryAdpater.submitList(it)
+        }
+        listForChannel.observe(viewLifecycleOwner) {
+            channelAdapter.submitList(it)
         }
 
-        list.observe(viewLifecycleOwner) {
-            homeAdapter.submitList(it)
+        binding.homeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, category ->
+            when (category) {
+                "자동차" -> {
+                    setCategoryItem("2")
+                    setChannelItem("자동차")
+                }
+                "스포츠" -> {
+                    setCategoryItem("17")
+                    setChannelItem("스포츠")
+                }
+                "음악" -> {
+                    setCategoryItem("10")
+                    setChannelItem("음악")
+                }
+                "코미디" -> {
+                    setCategoryItem("23")
+                    setChannelItem("개그")
+                }
+            }
         }
+
+        // most popular
         lifecycleScope.launch {
-            val response = RetrofitInstance.api.getYoutubeTrendVideos(
-                regionCode = Utils().getISORegionCode(),
-                maxResults = 10
+            val response = RetrofitInstance.api.getYoutubeMostPopular(
+                videoCategoryId = "20",
+                maxResults = 50
             )
             if (response.isSuccessful) {
                 val youtubeVideoInfo = response.body()!!
 
                 youtubeVideoInfo.items.orEmpty().forEach {
-                    viewModel.addHomeItem(
+                    viewModel.addPopularItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
                             title = it.snippet.title,

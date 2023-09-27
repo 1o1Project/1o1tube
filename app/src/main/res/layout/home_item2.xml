@@ -2,12 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="280dp"
+    android:layout_height="250dp">
+
 
     <ImageView
-        android:id="@+id/home_thumnail"
-        android:layout_width="match_parent"
+        android:id="@+id/channel_thumbnail"
+        android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginHorizontal="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -15,15 +16,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/home_title"
+        android:id="@+id/channel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:text="@string/home_title"
-        android:textSize="20sp"
-        android:textColor="@color/white"
         android:layout_marginHorizontal="10dp"
+        android:singleLine="true"
+        android:gravity="center"
+        android:text="@string/home_title"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_thumnail"/>
+        app:layout_constraintTop_toBottomOf="@id/channel_thumbnail" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

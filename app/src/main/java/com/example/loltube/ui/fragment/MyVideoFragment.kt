@@ -1,19 +1,16 @@
 package com.example.loltube.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.loltube.data.RetrofitInstance
-import com.example.loltube.data.SharedPrefInstance
 import com.example.loltube.databinding.FragmentMyVideoBinding
 import com.example.loltube.model.Snippet
 import com.example.loltube.ui.adapter.FavoriteListAdapter
