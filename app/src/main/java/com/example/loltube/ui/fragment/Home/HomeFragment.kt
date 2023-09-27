@@ -1,6 +1,7 @@
 package com.example.loltube.ui.fragment.Home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +36,12 @@ class HomeFragment : Fragment() {
 
                 val bundle = Bundle()
                 bundle.putParcelable(EXTRA_ITEM, item)
+                Log.d("item",item.toString())
 
-                VideoDetailFragment().arguments = bundle
+                val fragment = VideoDetailFragment()
+                fragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame,VideoDetailFragment())
+                    .add(R.id.main_fragment_frame,fragment)
                     .addToBackStack(null)
                     .commit()
                 }
@@ -102,7 +105,8 @@ class HomeFragment : Fragment() {
                     viewModel.addHomeItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title
+                            title = it.snippet.title,
+                            description = it.snippet.description
                         )
                     )
                 }
