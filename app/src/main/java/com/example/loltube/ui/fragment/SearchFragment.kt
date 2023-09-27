@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
@@ -24,7 +25,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
 
     // lateinit 대신 by lazy 로 변경
     private var _binding: FragmentSearchBinding? = null
-    private val binding:FragmentSearchBinding get() = _binding!!
+    private val binding: FragmentSearchBinding get() = _binding!!
     private val adapter: SearchAdapter by lazy {
         SearchAdapter(requireContext())
     }
@@ -35,18 +36,19 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     private val resItems: ArrayList<LOLModel> = ArrayList()
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setupScrollListener()
     }
 
     private fun initView() {
@@ -86,7 +88,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         try {
             val response = RetrofitInstance.api.getYouTubeVideos(
                 query = query,
-                maxResults = 30,
+                maxResults = 10,
                 videoOrder = "relevance"
             )
 
@@ -122,6 +124,70 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         transaction.add(R.id.main_fragment_frame, destinationFragment)
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    // 무한 스크롤 구현 중..
+    private var isLoading = false // 추가 데이터 로드 중인지 여부를 나타내는 플래그
+    private val visibleThreshold = 10 // 스크롤 끝까지 내려갔다고 판단할 아이템 개수
+    private var lastVisibleItem = 0
+    private var totalItemCount = 0
+    private var visibleItemCount = 0
+
+    private fun setupScrollListener() {
+        binding.fragmentSearchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                totalItemCount = gridmanager.itemCount
+                visibleItemCount = gridmanager.childCount
+
+                val firstVisibleItemPositions = gridmanager.findFirstVisibleItemPositions(null)
+
+                if (firstVisibleItemPositions != null && firstVisibleItemPositions.isNotEmpty()) {
+                    lastVisibleItem = firstVisibleItemPositions[0]
+                }
+
+                // 추가 데이터 로드 중이 아니고, 스크롤이 끝까지 내려갔을 때
+                if (!isLoading && totalItemCount <= (visibleItemCount + lastVisibleItem + visibleThreshold)) {
+                    // 추가 데이터 로드를 위한 함수
+                    fetchMoreData()
+                    isLoading = true
+                }
+            }
+        })
+    }
+
+
+    private fun fetchMoreData() {
+        val query = binding.keyWord.text.toString()
+        val nextPageToken = adapter.itemCount / 10 + 1 // 예를 들어, 한 페이지당 10개의 항목을 가져온다고 가정
+
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val response = RetrofitInstance.api.getYouTubeVideos(
+                    query = query,
+                    maxResults = 10,
+                    videoOrder = "relevance"
+                )
+
+                if (response.isSuccessful) {
+                    val youtubeVideo = response.body()!!
+                    youtubeVideo?.items?.forEach { snippet ->
+                        val title = snippet.snippet.title
+                        val url = snippet.snippet.thumbnails.medium.url
+                        resItems.add(LOLModel(title = title, thumbnail = url))
+                    }
+
+                    // 새로운 데이터를 RecyclerView에 추가
+                    adapter.notifyDataSetChanged()
+                    isLoading = false
+                }
+            } catch (e: Exception) {
+                // 네트워크 오류 예외처리
+                Log.e("#error check", "Error: ${e.message}")
+                isLoading = false // 오류 발생 시 isLoading 플래그를 false로 설정하여 다시 시도할 수 있도록 함
+            }
+        }
     }
 
     override fun onDestroyView() {
