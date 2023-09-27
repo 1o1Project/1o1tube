@@ -30,6 +30,7 @@ class HomeFragment : Fragment() {
     }
 
     private val popularAdpater by lazy {
+        
         HomeAdapterPopular(
             onClickItem = { position, item ->
                 parentFragmentManager.beginTransaction()
@@ -39,6 +40,7 @@ class HomeFragment : Fragment() {
             }
         )
     }
+
     private val categoryAdpater by lazy {
         HomeAdapterCategory(
             onClickItem = { position, item ->
