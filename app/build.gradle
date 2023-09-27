@@ -67,4 +67,6 @@ dependencies {
     implementation 'com.github.skydoves:powerspinner:1.2.7'
     // PowerSpinner
 
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
+
 }
