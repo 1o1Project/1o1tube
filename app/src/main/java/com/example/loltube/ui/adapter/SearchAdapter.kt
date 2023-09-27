@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +13,9 @@ import com.bumptech.glide.Glide
 import com.example.loltube.databinding.SearchItemBinding
 import com.example.loltube.model.LOLModel
 
-class SearchAdapter(private val mContext: Context) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
+
+// mContext 사용하지 않는다 혀 context로 변경
+class SearchAdapter(private val context: Context) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
     var items = ArrayList<LOLModel>()
 
     fun itemClear() {
@@ -30,7 +33,7 @@ class SearchAdapter(private val mContext: Context) : RecyclerView.Adapter<Search
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val currentItem = items[position]
 
-        Glide.with(mContext)
+        Glide.with(context)
             .load(currentItem.thumbnail)
             .into(holder.thumbNailImage)
 
@@ -51,7 +54,23 @@ class SearchAdapter(private val mContext: Context) : RecyclerView.Adapter<Search
 
         override fun onClick(view: View) {
             val position = adapterPosition.takeIf { it != RecyclerView.NO_POSITION } ?: return
-            notifyItemChanged(position)
+            val item = items[position]
+
+            // 클릭한 아이템을 인터페이스를 통해 SearchFragment로 전달
+            itemClickListener?.onItemClick(item)
         }
     }
+
+    // 인터페이스 정의
+    interface OnItemClickListener {
+        fun onItemClick(item: LOLModel)
+    }
+
+    private var itemClickListener: OnItemClickListener? = null
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        itemClickListener = listener
+    }
+
+
 }

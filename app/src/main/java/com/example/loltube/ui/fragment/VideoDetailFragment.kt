@@ -11,11 +11,13 @@ import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.loltube.databinding.FragmentVideoDetailBinding
 import com.example.loltube.model.LOLModel
+
 import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
 
 class VideoDetailFragment : Fragment() {
 
     private var item : LOLModel? = null
+
     private var _binding : FragmentVideoDetailBinding? = null
     private val binding : FragmentVideoDetailBinding
         get() = _binding!!

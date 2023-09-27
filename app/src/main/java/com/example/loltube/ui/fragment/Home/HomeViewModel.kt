@@ -14,7 +14,6 @@ class HomeViewModel(
     private val _list: MutableLiveData<List<LOLModel>> = MutableLiveData()
     val list : LiveData<List<LOLModel>> get() = _list
 
-
 //    fun addHomeItems(
 //        items: List<HomeModel>?
 //    ) {
@@ -28,6 +27,7 @@ class HomeViewModel(
 //
 //        ))
 //    }
+
     fun addHomeItem(
         item: LOLModel?
     ) {
@@ -44,7 +44,6 @@ class HomeViewModel(
 
 class HomeViewModelFactory : ViewModelProvider.Factory {
 
-    // id 를 부여할 값
     private val idGenerate = AtomicLong(1L)
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
