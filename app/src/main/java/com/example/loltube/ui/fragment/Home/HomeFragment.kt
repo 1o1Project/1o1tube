@@ -105,7 +105,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch() {
             val response = RetrofitInstance.api.getYoutubeMostPopular(
                 videoCategoryId = category,
-                maxResults = 10
+                maxResults = 15
             )
 
             if (response.isSuccessful) {
@@ -129,7 +129,7 @@ class HomeFragment : Fragment() {
             val response = RetrofitInstance.api.getYoutubeChannel(
                 query = query,
                 videoType = "channel",
-                maxResults = 5,
+                maxResults = 15,
                 regionCode = "KR",
                 part = "snippet"
             )
