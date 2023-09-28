@@ -13,11 +13,10 @@ import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.databinding.FragmentHomeBinding
 import com.example.loltube.model.LOLModel
-import com.example.loltube.ui.adapter.HomeAdapterCategory
-import com.example.loltube.ui.adapter.HomeAdapterChannel
-import com.example.loltube.ui.adapter.HomeAdapterPopular
+import com.example.loltube.ui.adapter.HomeCategoryAdapter
+import com.example.loltube.ui.adapter.HomeChannelAdapter
+import com.example.loltube.ui.adapter.HomePopularAdapter
 import com.example.loltube.ui.fragment.VideoDetailFragment
-import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -30,9 +29,9 @@ class HomeFragment : Fragment() {
     }
 
     private val popularAdpater by lazy {
-        
-        HomeAdapterPopular(
-            onClickItem = { position, item ->
+
+        HomePopularAdapter(
+            onClickItem = { item ->
                 parentFragmentManager.beginTransaction()
                     .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
@@ -42,8 +41,8 @@ class HomeFragment : Fragment() {
     }
 
     private val categoryAdpater by lazy {
-        HomeAdapterCategory(
-            onClickItem = { position, item ->
+        HomeCategoryAdapter(
+            onClickItem = { item ->
                 parentFragmentManager.beginTransaction()
                     .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
@@ -52,18 +51,8 @@ class HomeFragment : Fragment() {
         )
     }
     private val channelAdapter by lazy {
-        HomeAdapterChannel(
-            onClickItem = { position, item ->
-//                val bundle = Bundle()
-//                bundle.putParcelable(EXTRA_ITEM, item)
-//
-//                val videoDetailFragment = VideoDetailFragment()
-//                videoDetailFragment.arguments = bundle
-//
-//                parentFragmentManager.beginTransaction()
-//                    .add(R.id.main_fragment_frame, videoDetailFragment)
-//                    .addToBackStack(null)
-//                    .commit()
+        HomeChannelAdapter(
+            onClickItem = { item ->
                 parentFragmentManager.beginTransaction()
                     .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                     .addToBackStack(null)
@@ -153,7 +142,6 @@ class HomeFragment : Fragment() {
 
     private fun initModel() = with(viewModel) {
 
-
         listForPopular.observe(viewLifecycleOwner) {
             popularAdpater.submitList(it)
         }
@@ -170,14 +158,17 @@ class HomeFragment : Fragment() {
                     setCategoryItem("2")
                     setChannelItem("자동차")
                 }
+
                 "스포츠" -> {
                     setCategoryItem("17")
                     setChannelItem("스포츠")
                 }
+
                 "음악" -> {
                     setCategoryItem("10")
                     setChannelItem("음악")
                 }
+
                 "코미디" -> {
                     setCategoryItem("23")
                     setChannelItem("개그")
@@ -211,5 +202,6 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
 
