@@ -9,9 +9,9 @@ import com.bumptech.glide.Glide
 import com.example.loltube.databinding.HomeItemBinding
 import com.example.loltube.model.LOLModel
 
-class HomeAdapter(
-    private val onClickItem: (Int, LOLModel) -> Unit,
-) : ListAdapter<LOLModel, HomeAdapter.ViewHolder>(
+class HomePopularAdapter(
+    private val onClickItem: (LOLModel) -> Unit,
+) : ListAdapter<LOLModel, HomePopularAdapter.ViewHolder>(
 
     object : DiffUtil.ItemCallback<LOLModel>() {
         override fun areItemsTheSame(
@@ -30,21 +30,21 @@ class HomeAdapter(
     }
 ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClickItem
         )
     }
 
-    override fun onBindViewHolder(holder: HomeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
     }
 
     class ViewHolder(
         private val binding: HomeItemBinding,
-        private val onClickItem: (Int, LOLModel) -> Unit
+        private val onClickItem: (LOLModel) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: LOLModel) = with(binding) {
@@ -56,8 +56,8 @@ class HomeAdapter(
 
             container.setOnClickListener {
                 onClickItem(
-                    adapterPosition,
-                    item)
+                    item
+                )
             }
         }
     }

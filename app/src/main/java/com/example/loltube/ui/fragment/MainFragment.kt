@@ -17,11 +17,12 @@ class MainFragment : Fragment() {
     private val adapter by lazy {
         ViewPagerFragmentAdapter(requireActivity())
     }
-    private val title = arrayOf("Home", "Search", "MyPage")
+    private val title = arrayOf("Home", "Shorts", "Search", "MyPage")
     private val tabIcon = arrayOf(
         R.drawable.ic_home,
+        R.drawable.ic_my_page,
         R.drawable.ic_search,
-        R.drawable.ic_my_page
+        R.drawable.ic_person
     )
 
     override fun onCreateView(
