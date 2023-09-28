@@ -214,7 +214,7 @@ class HomeFragment : Fragment() {
     private fun setCategoryItem(category: String) {
         lifecycleScope.launch() {
             val response = RetrofitInstance.api.getCategory(
-                videoCategoryId = category, maxResults = 3
+                videoCategoryId = category, maxResults = 10
             )
 
             if (response.isSuccessful) {
@@ -244,7 +244,7 @@ class HomeFragment : Fragment() {
                     lifecycleScope.launch {
                         val response = RetrofitInstance.api.getNextCategory(
                             videoCategoryId = "$categoryId",
-                            maxResults = 3,
+                            maxResults = 10,
                             pageToken = "$tokenForCategory"
                         )
                         if (response.isSuccessful) {

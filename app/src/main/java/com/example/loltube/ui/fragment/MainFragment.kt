@@ -22,7 +22,7 @@ class MainFragment : Fragment() {
         R.drawable.ic_home,
         R.drawable.ic_my_page,
         R.drawable.ic_search,
-        R.drawable.ic_my_page
+        R.drawable.ic_person
     )
 
     override fun onCreateView(
