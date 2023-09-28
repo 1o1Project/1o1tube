@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.loltube.data.RetrofitInstance
 import com.example.loltube.databinding.FragmentMyVideoBinding
 import com.example.loltube.model.Snippet
@@ -43,6 +44,7 @@ class MyVideoFragment : Fragment() {
         binding.mypageFavoriteRv.adapter = adapter
         binding.mypageFavoriteRv.layoutManager = GridLayoutManager(requireActivity(), 2)
         binding.mypageFavoriteRv.itemAnimator = null
+
 
         lifecycleScope.launch {
             //SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
