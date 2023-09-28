@@ -1,7 +1,11 @@
 package com.example.loltube.data
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import java.nio.channels.Channel
 
 sealed interface ApiState<out T> {
     class Success<T>(val data: T, val nextPageToken: String) : ApiState<T>
@@ -16,7 +20,7 @@ class ShortsRepositoryImpl : ShortsRepository {
         emit(ApiState.Loading)
         try {
             val response =
-                api.getYouTubeVideos(query = "롤 쇼츠", videoOrder = "viewCount", maxResults = 5)
+                api.getYouTubeVideos(query = "LCK 쇼츠", videoOrder = "viewCount", maxResults = 10)
 
             if (response.isSuccessful) {
                 val item = response.body()?.items?.filter {
@@ -24,7 +28,7 @@ class ShortsRepositoryImpl : ShortsRepository {
                             || it.snippet.description.contains("쇼츠") || it.snippet.title.contains("short")
                             || it.snippet.title.contains("Short") || it.snippet.title.contains("쇼츠")
                 }.orEmpty()
-                Log.d("shorts", item.toString())
+                Log.d("getYoutube", item.toString())
                 emit(ApiState.Success(item, response.body()!!.nextPageToken))
             } else {
                 emit(ApiState.Error(null, response.errorBody().toString()))
@@ -33,14 +37,14 @@ class ShortsRepositoryImpl : ShortsRepository {
         } catch (e: Exception) {
             emit(ApiState.Error(null, "Unknown Error"))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getNextShorts(nextPageToken: String) = flow {
         emit(ApiState.Loading)
 
         try {
             val response =
-                api.getYouTubeMoreVideos(query = "롤 쇼츠", videoOrder = "viewCount", maxResults = 5, nextPageToken = nextPageToken)
+                api.getYouTubeMoreVideos(query = "LCK 쇼츠", videoOrder = "viewCount", maxResults = 10, nextPageToken = nextPageToken)
 
             if (response.isSuccessful) {
                 val item = response.body()?.items?.filter {
@@ -50,9 +54,8 @@ class ShortsRepositoryImpl : ShortsRepository {
                 }.orEmpty()
                 emit(ApiState.Success(item, response.body()!!.nextPageToken))
             }
-
         } catch (e: Exception) {
             emit(ApiState.Error(null, "Unknown Error"))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }

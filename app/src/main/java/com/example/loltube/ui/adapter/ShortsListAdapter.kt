@@ -1,20 +1,39 @@
 package com.example.loltube.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.manager.Lifecycle
 import com.example.loltube.databinding.ShortsItemBinding
 import com.example.loltube.model.Items
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
-class ShortsListAdapter(private val loadVideo : (YouTubePlayerView, Items) -> Unit) : RecyclerView.Adapter<ShortsListAdapter.ViewHolder>() {
+class ShortsListAdapter(private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.Adapter<ShortsListAdapter.ViewHolder>() {
 
     private var shortList: List<Items> = mutableListOf()
 
-    class ViewHolder(private val binding: ShortsItemBinding, private val loadVideo: (YouTubePlayerView, Items) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ShortsItemBinding, private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.ViewHolder(binding.root) {
+        private var youTubePlayer: YouTubePlayer? = null
+        private var currentVideoId: String? = null
+        init {
+            val youtubePlayerView = binding.shortsView
+            lifecycle.addObserver(youtubePlayerView)
+
+            youtubePlayerView.addYouTubePlayerListener(object: AbstractYouTubePlayerListener() {
+                override fun onReady(youTubePlayer: YouTubePlayer) {
+                    super.onReady(youTubePlayer)
+                    this@ViewHolder.youTubePlayer = youTubePlayer
+                    currentVideoId?.let { youTubePlayer.loadVideo(it, 0f) }
+                }
+            })
+        }
         fun bind(items: Items) {
-            loadVideo(binding.shortsView, items)
+            currentVideoId = items.id.videoId
+            youTubePlayer?.loadVideo(items.id.videoId, 0f)
         }
     }
 
@@ -24,7 +43,7 @@ class ShortsListAdapter(private val loadVideo : (YouTubePlayerView, Items) -> Un
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ShortsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), loadVideo)
+        return ViewHolder(ShortsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), lifecycle)
     }
 
     override fun getItemCount(): Int {

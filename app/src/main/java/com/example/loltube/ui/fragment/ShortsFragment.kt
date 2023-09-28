@@ -1,6 +1,7 @@
 package com.example.loltube.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,22 +21,14 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 
 class ShortsFragment : Fragment() {
 
-    private var _binding : FragmentShortsBinding? = null
-    private val binding : FragmentShortsBinding
+    private var _binding: FragmentShortsBinding? = null
+    private val binding: FragmentShortsBinding
         get() = _binding!!
 
     private val viewModel: ShortsViewModel by viewModels { ShortsViewModelFactory() }
 
-    private val adapter = ShortsListAdapter { view, item ->
-        lifecycle.addObserver(view)
-
-        view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                super.onReady(youTubePlayer)
-                youTubePlayer.loadVideo(item.id.videoId, 0F)
-            }
-        })
-
+    private val adapter by lazy {
+        ShortsListAdapter(lifecycle)
     }
 
     override fun onCreateView(
@@ -46,6 +39,7 @@ class ShortsFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
@@ -53,7 +47,8 @@ class ShortsFragment : Fragment() {
 
     private fun initView() {
         binding.shortsRv.adapter = adapter
-        binding.shortsRv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        binding.shortsRv.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.shortsRv.apply {
             itemAnimator = null
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -71,14 +66,23 @@ class ShortsFragment : Fragment() {
         PagerSnapHelper().attachToRecyclerView(binding.shortsRv)
 
         viewModel.uiState.observe(viewLifecycleOwner) {
-            when(it) {
+            when (it) {
                 is UiState.Loading -> {}
-                is UiState.Success -> adapter.setList(it.data)
+                is UiState.Success -> {
+                    val recyclerViewState = binding.shortsRv.layoutManager?.onSaveInstanceState()
+                    adapter.setList(it.data)
+                    binding.shortsRv.layoutManager?.onRestoreInstanceState(recyclerViewState)
+                }
+
                 is UiState.Error -> {}
             }
         }
 
-        viewModel.getShorts()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.loltube.data.ApiState
 import com.example.loltube.data.ShortsRepository
 import com.example.loltube.model.Items
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed interface UiState<out T> {
@@ -25,11 +26,15 @@ class ShortsViewModel(private val shortsRepository: ShortsRepository) : ViewMode
     private var curList: MutableList<Items> = mutableListOf()
     private var nextPageToken: String = ""
 
-    fun getShorts() {
+    init {
+        getShorts()
+    }
+
+    private fun getShorts() {
         viewModelScope.launch {
             shortsRepository
                 .getShorts()
-                .collect {
+                .collectLatest {
                     when(it) {
                         is ApiState.Loading -> _uiState.value = UiState.Loading
                         is ApiState.Error -> _uiState.value = UiState.Error(it.message)
@@ -37,7 +42,6 @@ class ShortsViewModel(private val shortsRepository: ShortsRepository) : ViewMode
                             _uiState.value = UiState.Success(it.data)
                             curList = it.data.toMutableList()
                             nextPageToken = it.nextPageToken
-                            Log.d("nextPageToken", nextPageToken)
                         }
                     }
                 }
@@ -48,14 +52,13 @@ class ShortsViewModel(private val shortsRepository: ShortsRepository) : ViewMode
         viewModelScope.launch {
             shortsRepository
                 .getNextShorts(nextPageToken)
-                .collect {
+                .collectLatest {
                     when(it) {
                         is ApiState.Loading -> _uiState.value = UiState.Loading
                         is ApiState.Error -> _uiState.value = UiState.Error(it.message)
                         is ApiState.Success -> {
                             _uiState.value = UiState.Success(curList.apply { addAll(it.data) })
                             nextPageToken = it.nextPageToken
-                            Log.d("nextPageToken", nextPageToken)
                         }
                     }
                 }
