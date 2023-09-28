@@ -13,7 +13,10 @@ data class YoutubeVideoInfo(
     val etag: String,
     @SerializedName("items")
     @Expose
-    val items: List<TrendItem>?
+    val items: List<TrendItem>?,
+    @SerializedName("nextPageToken")
+    @Expose
+    val nextPageToken: String?
 )
 
 data class TrendItem(

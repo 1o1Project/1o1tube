@@ -95,12 +95,12 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    resItems.add(LOLModel(title = title, thumbnail = url, description =  null))
+                    val description =snippet.snippet.description
+                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description))
                 }
             }
 
             adapter.items = resItems
-
             adapter.notifyDataSetChanged()
         } catch (e: Exception) {
             //네트워크 오류 예외처리

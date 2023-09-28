@@ -1,6 +1,7 @@
 package com.example.loltube.ui.fragment.Home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
@@ -24,47 +26,48 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding: FragmentHomeBinding get() = _binding!!
 
+    private var loading = true
+
+    // nextPageToken 변수
+    private var tokenForPopular: String? = null
+    private var tokenForCategory: String? = null
+    private var tokenForChannel: String? = null
+
+    private var categoryId: String? = null
+    private var getQuery: String? = null
+
+
     private val viewModel: HomeViewModel by lazy {
         ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
     }
 
     private val popularAdpater by lazy {
 
-        HomePopularAdapter(
-            onClickItem = { item ->
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        )
+        HomePopularAdapter(onClickItem = { item ->
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
+                .addToBackStack(null).commit()
+        })
     }
 
     private val categoryAdpater by lazy {
-        HomeCategoryAdapter(
-            onClickItem = { item ->
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        )
+        HomeCategoryAdapter(onClickItem = { item ->
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
+                .addToBackStack(null).commit()
+        })
     }
     private val channelAdapter by lazy {
-        HomeChannelAdapter(
-            onClickItem = { item ->
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        )
+        HomeChannelAdapter(onClickItem = { item ->
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
+                .addToBackStack(null).commit()
+        })
     }
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -76,68 +79,34 @@ class HomeFragment : Fragment() {
         initModel()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.homeSpinner.dismiss()
+    }
+
     private fun initView() = with(binding) {
+
         recyclerView.adapter = popularAdpater
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        PagerSnapHelper().attachToRecyclerView(binding.recyclerView)
+        recyclerView.addOnScrollListener(onPopularScrollListener)
 
         recyclerView2.adapter = categoryAdpater
         recyclerView2.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        PagerSnapHelper().attachToRecyclerView(binding.recyclerView2)
+        recyclerView2.addOnScrollListener(onCategoryScrollListener)
 
         recyclerView3.adapter = channelAdapter
         recyclerView3.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        PagerSnapHelper().attachToRecyclerView(binding.recyclerView3)
+        recyclerView3.addOnScrollListener(onChannelScrollListener)
 
 
-    }
-
-    // 카테고리
-    private fun setCategoryItem(category: String) {
-        lifecycleScope.launch() {
-            val response = RetrofitInstance.api.getYoutubeMostPopular(
-                videoCategoryId = category,
-                maxResults = 15
-            )
-
-            if (response.isSuccessful) {
-                val youtubeCategory = response.body()!!
-                viewModel.clearCategory()
-                youtubeCategory.items.orEmpty().forEach {
-                    viewModel.addCategoryItem(
-                        LOLModel(
-                            thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title,
-                            description = it.snippet.description
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    // 채널
-    private fun setChannelItem(query: String) {
-        lifecycleScope.launch {
-            val response = RetrofitInstance.api.getYoutubeChannel(
-                query = query,
-                videoType = "channel",
-                maxResults = 15,
-                regionCode = "KR",
-                part = "snippet"
-            )
-
-            if (response.isSuccessful) {
-                val youtubeVideoInfo = response.body()!!
-                viewModel.clearChannel()
-                youtubeVideoInfo.items.orEmpty().forEach {
-                    viewModel.addChannelItem(
-                        LOLModel(
-                            thumbnail = it.snippet.thumbnails.medium.url,
-                            title = it.snippet.title,
-                            description = it.snippet.description
-                        )
-                    )
-                }
-            }
-        }
     }
 
     private fun initModel() = with(viewModel) {
@@ -150,6 +119,15 @@ class HomeFragment : Fragment() {
         }
         listForChannel.observe(viewLifecycleOwner) {
             channelAdapter.submitList(it)
+        }
+
+        isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.pbSearch.visibility = View.VISIBLE
+            } else {
+                binding.pbSearch.visibility = View.GONE
+            }
+            loading = !isLoading
         }
 
         binding.homeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, category ->
@@ -176,17 +154,74 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // most popular
-        lifecycleScope.launch {
-            val response = RetrofitInstance.api.getYoutubeMostPopular(
-                videoCategoryId = "20",
-                maxResults = 50
-            )
-            if (response.isSuccessful) {
-                val youtubeVideoInfo = response.body()!!
+        // popular
+    lifecycleScope.launch {
+        val response = RetrofitInstance.api.getMostPopular(
+            videoCategoryId = "20", maxResults = 3
+        )
+        if (response.isSuccessful) {
+            val popularData = response.body()!!
 
-                youtubeVideoInfo.items.orEmpty().forEach {
-                    viewModel.addPopularItem(
+            popularData.items.orEmpty().forEach {
+                viewModel.addPopularItem(
+                    LOLModel(
+                        thumbnail = it.snippet.thumbnails.medium.url,
+                        title = it.snippet.title,
+                        description = it.snippet.description
+                    )
+                )
+            }
+            tokenForPopular = popularData.nextPageToken
+            Log.d("choco5732", "nextPageToken = ${tokenForPopular}")
+        }
+    }
+
+        binding.homeSpinner.selectItemByIndex(0)
+    }
+
+    // popular 리스너
+    private var onPopularScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollHorizontally(1)) {
+                    lifecycleScope.launch {
+                        val response = RetrofitInstance.api.getNextMostPopular(
+                            videoCategoryId = "20",
+                            maxResults = 3,
+                            pageToken = "$tokenForPopular"
+                        )
+                        if (response.isSuccessful) {
+                            val popularData = response.body()!!
+
+                            popularData.items.orEmpty().forEach {
+                                viewModel.addPopularItem(
+                                    LOLModel(
+                                        thumbnail = it.snippet.thumbnails.medium.url,
+                                        title = it.snippet.title,
+                                        description = it.snippet.description
+                                    )
+                                )
+                            }
+                            tokenForPopular = popularData.nextPageToken
+                        }
+                    }
+                }
+            }
+        }
+
+
+    // 카테고리
+    private fun setCategoryItem(category: String) {
+        lifecycleScope.launch() {
+            val response = RetrofitInstance.api.getCategory(
+                videoCategoryId = category, maxResults = 3
+            )
+
+            if (response.isSuccessful) {
+                val categoryData = response.body()!!
+                viewModel.clearCategory()
+                categoryData.items.orEmpty().forEach {
+                    viewModel.addCategoryItem(
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
                             title = it.snippet.title,
@@ -194,14 +229,103 @@ class HomeFragment : Fragment() {
                         )
                     )
                 }
+                tokenForCategory = categoryData.nextPageToken
+                categoryId = category
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    // 카테고리 리스너
+    private var onCategoryScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollHorizontally(1)) {
+                    Log.d("choco5732", "카테고리 끝에 도달")
+                    lifecycleScope.launch {
+                        val response = RetrofitInstance.api.getNextCategory(
+                            videoCategoryId = "$categoryId",
+                            maxResults = 3,
+                            pageToken = "$tokenForCategory"
+                        )
+                        if (response.isSuccessful) {
+                            val categoryData = response.body()!!
+
+                            categoryData.items.orEmpty().forEach {
+                                viewModel.addCategoryItem(
+                                    LOLModel(
+                                        thumbnail = it.snippet.thumbnails.medium.url,
+                                        title = it.snippet.title,
+                                        description = it.snippet.description
+                                    )
+                                )
+                            }
+                            tokenForCategory = categoryData.nextPageToken
+                        }
+                    }
+                }
+            }
+        }
+
+    // 채널
+    private fun setChannelItem(query: String) {
+        lifecycleScope.launch {
+            val response = RetrofitInstance.api.getChannel(
+                query = query,
+                videoType = "channel",
+                maxResults = 3,
+                regionCode = "KR"
+            )
+
+            if (response.isSuccessful) {
+                val channelData = response.body()!!
+                viewModel.clearChannel()
+                channelData.items.orEmpty().forEach {
+                    viewModel.addChannelItem(
+                        LOLModel(
+                            thumbnail = it.snippet.thumbnails.medium.url,
+                            title = it.snippet.title,
+                            description = it.snippet.description
+                        )
+                    )
+                }
+                tokenForChannel = channelData.nextPageToken
+                getQuery = query
+            }
+        }
     }
+
+    // 채널 리스너
+    private var onChannelScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollHorizontally(1)) {
+                    lifecycleScope.launch {
+                        val response = RetrofitInstance.api.getNextChannel(
+                            query = "$getQuery",
+                            videoType = "channel",
+                            maxResults = 3,
+                            regionCode = "KR",
+                            pageToken = "$tokenForChannel"
+                        )
+                        if (response.isSuccessful) {
+                            val channelData = response.body()!!
+
+                            channelData.items.orEmpty().forEach {
+                                viewModel.addChannelItem(
+                                    LOLModel(
+                                        thumbnail = it.snippet.thumbnails.medium.url,
+                                        title = it.snippet.title,
+                                        description = it.snippet.description
+                                    )
+                                )
+                            }
+                            tokenForChannel = channelData.nextPageToken
+                        }
+                    }
+                }
+            }
+        }
+
 
 }
 
