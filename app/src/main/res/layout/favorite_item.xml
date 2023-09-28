@@ -29,7 +29,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/favorite_thumbnail_image"
                 android:layout_width="match_parent"
@@ -47,7 +46,6 @@
                 android:textColor="#FFFFFF"
                 android:fontFamily="@font/beaufortforlol_bold"
                 android:text="TextView" />
-
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
