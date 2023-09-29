@@ -7,29 +7,26 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/home_thumnail"
-            android:layout_width="350dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:scaleType="fitXY"
             app:shapeAppearanceOverlay="@style/Round"
-            android:layout_marginEnd="22dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/home_title"
-            android:layout_width="330dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:singleLine="true"
             android:fontFamily="@font/lee_sun_sin_bold"
             android:gravity="center_horizontal"
             android:text="@string/home_title"
             android:textColor="@color/dark_silver"
-            android:textSize="23sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/home_thumnail" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

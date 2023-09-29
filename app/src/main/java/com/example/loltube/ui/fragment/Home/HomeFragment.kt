@@ -110,7 +110,6 @@ class HomeFragment : Fragment() {
         PagerSnapHelper().attachToRecyclerView(binding.recyclerView3)
         recyclerView3.addOnScrollListener(onChannelScrollListener)
 
-
     }
 
     private fun initModel() = with(viewModel) {
@@ -149,7 +148,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // popular
+    // popular
     lifecycleScope.launch {
         val response = RetrofitInstance.api.getMostPopular(
             videoCategoryId = "20", maxResults = 3
