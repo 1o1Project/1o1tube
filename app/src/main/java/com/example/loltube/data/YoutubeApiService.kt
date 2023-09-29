@@ -58,6 +58,7 @@ interface YoutubeApiService {
         @Query("videoCategoryId") videoCategoryId: String,
         @Query("maxResults") maxResults: Int
     ): Response<YoutubeVideoInfo>
+
     @GET("videos")
     suspend fun getNextMostPopular(
         @Query("part") part: String = "snippet",
@@ -69,7 +70,6 @@ interface YoutubeApiService {
         @Query("pageToken") pageToken: String
     ): Response<YoutubeVideoInfo>
 
-
     @GET("videos")
     suspend fun getCategory(
         @Query("key") apiKey: String = AUTH_HEADER,
@@ -79,6 +79,7 @@ interface YoutubeApiService {
         @Query("videoCategoryId") videoCategoryId: String,
         @Query("maxResults") maxResults: Int
     ): Response<YoutubeVideoInfo>
+
     @GET("videos")
     suspend fun getNextCategory(
         @Query("part") part: String = "snippet",
@@ -99,6 +100,7 @@ interface YoutubeApiService {
         @Query("maxResults") maxResults: Int,
         @Query("reginCode") regionCode: String
     ): Response<YoutubeVideo>
+
     @GET("search")
     suspend fun getNextChannel(
         @Query("key") apiKey: String = AUTH_HEADER,

@@ -26,7 +26,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding: FragmentHomeBinding get() = _binding!!
 
-    private var loading = true
 
     // nextPageToken 변수
     private var tokenForPopular: String? = null
@@ -42,27 +41,32 @@ class HomeFragment : Fragment() {
     }
 
     private val popularAdpater by lazy {
-
-        HomePopularAdapter(onClickItem = { item ->
+        HomePopularAdapter(
+            onClickItem = { item ->
             parentFragmentManager.beginTransaction()
                 .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                 .addToBackStack(null).commit()
-        })
+            }
+        )
     }
 
     private val categoryAdpater by lazy {
-        HomeCategoryAdapter(onClickItem = { item ->
+        HomeCategoryAdapter(
+            onClickItem = { item ->
             parentFragmentManager.beginTransaction()
                 .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                 .addToBackStack(null).commit()
-        })
+            }
+        )
     }
     private val channelAdapter by lazy {
-        HomeChannelAdapter(onClickItem = { item ->
+        HomeChannelAdapter(
+            onClickItem = { item ->
             parentFragmentManager.beginTransaction()
                 .add(R.id.main_fragment_frame, VideoDetailFragment.newInstance(item))
                 .addToBackStack(null).commit()
-        })
+            }
+        )
     }
 
 
@@ -119,15 +123,6 @@ class HomeFragment : Fragment() {
         }
         listForChannel.observe(viewLifecycleOwner) {
             channelAdapter.submitList(it)
-        }
-
-        isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.pbSearch.visibility = View.VISIBLE
-            } else {
-                binding.pbSearch.visibility = View.GONE
-            }
-            loading = !isLoading
         }
 
         binding.homeSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, category ->
@@ -214,7 +209,7 @@ class HomeFragment : Fragment() {
     private fun setCategoryItem(category: String) {
         lifecycleScope.launch() {
             val response = RetrofitInstance.api.getCategory(
-                videoCategoryId = category, maxResults = 10
+                videoCategoryId = category, maxResults = 5
             )
 
             if (response.isSuccessful) {
@@ -272,7 +267,7 @@ class HomeFragment : Fragment() {
             val response = RetrofitInstance.api.getChannel(
                 query = query,
                 videoType = "channel",
-                maxResults = 3,
+                maxResults = 5,
                 regionCode = "KR"
             )
 
@@ -303,7 +298,7 @@ class HomeFragment : Fragment() {
                         val response = RetrofitInstance.api.getNextChannel(
                             query = "$getQuery",
                             videoType = "channel",
-                            maxResults = 3,
+                            maxResults = 10,
                             regionCode = "KR",
                             pageToken = "$tokenForChannel"
                         )
@@ -325,7 +320,5 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-
 }
 
