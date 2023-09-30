@@ -1,16 +1,12 @@
 package com.example.loltube.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.manager.Lifecycle
 import com.example.loltube.databinding.ShortsItemBinding
 import com.example.loltube.model.Items
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 class ShortsListAdapter(private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.Adapter<ShortsListAdapter.ViewHolder>() {
 

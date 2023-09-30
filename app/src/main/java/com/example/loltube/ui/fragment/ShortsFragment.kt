@@ -1,7 +1,6 @@
 package com.example.loltube.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,14 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.loltube.R
 import com.example.loltube.databinding.FragmentShortsBinding
 import com.example.loltube.ui.adapter.ShortsListAdapter
 import com.example.loltube.ui.viewmodel.ShortsViewModel
 import com.example.loltube.ui.viewmodel.ShortsViewModelFactory
 import com.example.loltube.ui.viewmodel.UiState
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 
 class ShortsFragment : Fragment() {
 

@@ -48,7 +48,6 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        setupScrollListener()
     }
 
     private fun initView() {
@@ -58,6 +57,9 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         //어댑터 연결
         binding.fragmentSearchRecyclerView.adapter = adapter
         adapter.setOnItemClickListener(this)
+
+
+
         //리스너 설정
         binding.searchBtn.setOnClickListener {
             val query = binding.keyWord.text.toString()
@@ -67,7 +69,6 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                     val query = query
                     adapter.itemClear()
                     fetchItemResults(query)
-
                 }
 
             } else {
@@ -78,14 +79,63 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             val imm =
                 requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.keyWord.windowToken, 0)
+
+            setupScrollListener()
+        }
+
+        //카테고리 Top 리스너 설정
+        binding.topBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val query = "탑-롤"
+                adapter.itemClear()
+                fetchItemResults(query)
+                setupScrollListener()
+            }
+        }
+        binding.jgBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val query = "정글-롤"
+                adapter.itemClear()
+                fetchItemResults(query)
+                setupScrollListener()
+            }
+        }
+        binding.midBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val query = "미드-롤"
+                adapter.itemClear()
+                fetchItemResults(query)
+                setupScrollListener()
+            }
+        }
+        binding.adBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val query = "원딜-롤"
+                adapter.itemClear()
+                fetchItemResults(query)
+                setupScrollListener()
+            }
+        }
+        binding.supBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val query = "서폿-롤"
+                adapter.itemClear()
+                fetchItemResults(query)
+                setupScrollListener()
+            }
         }
 
     }
 
 
-    private lateinit var currenttoken : String
+    private lateinit var currenttoken: String
 
-    //유튜브 검색 API
+    //유튜브 검색
     private suspend fun fetchItemResults(query: String) {
         try {
             val response = RetrofitInstance.api.getYouTubeVideos(
@@ -99,8 +149,14 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                 youtubeVideo?.items?.forEach { snippet ->
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
-                    val description =snippet.snippet.description
-                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description))
+                    val description = snippet.snippet.description
+                    resItems.add(
+                        LOLModel(
+                            title = title,
+                            thumbnail = url,
+                            description = description
+                        )
+                    )
                 }
             }
 
@@ -113,6 +169,33 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             Log.e("#error check", "Error: ${e.message}")
         }
     }
+
+    /*private suspend fun fetchCategoryResults(category:String){
+        try {
+            val response = RetrofitInstance.api.getCategory(
+                videoCategoryId = category, maxResults = 20
+            )
+
+            if (response.isSuccessful){
+                val youtubeVideo = response.body()!!
+                youtubeVideo?.items?.forEach { snippet ->
+                    val title = snippet.snippet.title
+                    val url = snippet.snippet.thumbnails.medium.url
+                    val description = snippet.snippet.description
+                    resItems.add(
+                        LOLModel(
+                            title = title,
+                            thumbnail = url,
+                            description = description
+                        )
+                    )
+                }
+            }
+        }catch (e: Exception) {
+            //네트워크 오류 예외처리
+            Log.e("#error check", "Error: ${e.message}")
+        }
+    }*/
 
     // 아이템 클릭 이벤트 처리
     override fun onItemClick(item: LOLModel) {
@@ -130,7 +213,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         transaction.commit()
     }
 
-    // 무한 스크롤 구현 중..
+    // 무한 스크롤 구현
     private var isLoading = false // 추가 데이터 로드 중인지 여부를 나타내는 플래그
     private val visibleThreshold = 10 // 스크롤 끝까지 내려갔다고 판단할 아이템 개수
     private var lastVisibleItem = 0
@@ -138,7 +221,8 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     private var visibleItemCount = 0
 
     private fun setupScrollListener() {
-        binding.fragmentSearchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.fragmentSearchRecyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -180,7 +264,12 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                     youtubeVideo?.items?.forEach { snippet ->
                         val title = snippet.snippet.title
                         val url = snippet.snippet.thumbnails.medium.url
-                        resItems.add(LOLModel(title = title, thumbnail = url))
+                        val description = snippet.snippet.description
+                        resItems.add(
+                            LOLModel(
+                                title = title,
+                                thumbnail = url,
+                                description = description))
                     }
 
                     // 새로운 데이터를 RecyclerView에 추가
@@ -198,6 +287,8 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             }
         }
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
