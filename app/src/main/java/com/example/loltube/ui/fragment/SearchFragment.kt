@@ -34,20 +34,20 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     }
 
     private val resItems: ArrayList<LOLModel> = ArrayList()
-
+    private var query:String =""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setupScrollListener()
     }
 
     private fun initView() {
@@ -58,19 +58,16 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         binding.fragmentSearchRecyclerView.adapter = adapter
         adapter.setOnItemClickListener(this)
 
-
-
         //리스너 설정
         binding.searchBtn.setOnClickListener {
-            val query = binding.keyWord.text.toString()
+            query = binding.keyWord.text.toString()
 
             if (query.isNotEmpty()) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val query = query
-                    adapter.itemClear()
-                    fetchItemResults(query)
-                }
 
+                    adapter.itemClear()
+                    fetchItemResults()
+                }
             } else {
                 Toast.makeText(requireContext(), "검색어를 입력해 주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -79,64 +76,57 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             val imm =
                 requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.keyWord.windowToken, 0)
-
-            setupScrollListener()
         }
 
         //카테고리 Top 리스너 설정
         binding.topBtn.setOnClickListener{
 
             GlobalScope.launch(Dispatchers.Main) {
-                val query = "탑-롤"
+                query = "탑-롤"
+  //              binding.fragmentSearchRecyclerView.removeOnScrollListener(listnenr)
+
                 adapter.itemClear()
-                fetchItemResults(query)
-                setupScrollListener()
+                fetchItemResults()
             }
         }
         binding.jgBtn.setOnClickListener{
 
             GlobalScope.launch(Dispatchers.Main) {
-                val query = "정글-롤"
+                query = "정글-롤"
                 adapter.itemClear()
-                fetchItemResults(query)
-                setupScrollListener()
+                fetchItemResults()
             }
         }
         binding.midBtn.setOnClickListener{
 
             GlobalScope.launch(Dispatchers.Main) {
-                val query = "미드-롤"
+                query = "미드-롤"
                 adapter.itemClear()
-                fetchItemResults(query)
-                setupScrollListener()
+                fetchItemResults()
             }
         }
         binding.adBtn.setOnClickListener{
 
             GlobalScope.launch(Dispatchers.Main) {
-                val query = "원딜-롤"
+                query = "원딜-롤"
                 adapter.itemClear()
-                fetchItemResults(query)
-                setupScrollListener()
+                fetchItemResults()
             }
         }
         binding.supBtn.setOnClickListener{
 
             GlobalScope.launch(Dispatchers.Main) {
-                val query = "서폿-롤"
+                query = "서폿-롤"
                 adapter.itemClear()
-                fetchItemResults(query)
-                setupScrollListener()
+                fetchItemResults()
             }
         }
-
     }
-
 
     private lateinit var currenttoken: String
 
     //유튜브 검색
-    private suspend fun fetchItemResults(query: String) {
+    private suspend fun fetchItemResults() {
         try {
             val response = RetrofitInstance.api.getYouTubeVideos(
                 query = query,
@@ -220,8 +210,10 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     private var totalItemCount = 0
     private var visibleItemCount = 0
 
+    private lateinit var listnenr : RecyclerView.OnScrollListener
+
     private fun setupScrollListener() {
-        binding.fragmentSearchRecyclerView.addOnScrollListener(object :
+        listnenr = object :
             RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -239,16 +231,15 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                 if (!isLoading && totalItemCount <= (visibleItemCount + lastVisibleItem + visibleThreshold)) {
                     // 추가 데이터 로드를 위한 함수
                     fetchMoreData()
+                    Log.d("query",query)
                     isLoading = true
                 }
             }
-        })
+        }
+        binding.fragmentSearchRecyclerView.addOnScrollListener(listnenr)
     }
 
-
     private fun fetchMoreData() {
-        val query = binding.keyWord.text.toString()
-        val nextPageToken = adapter.itemCount / 10 + 1 // 예를 들어, 한 페이지당 10개의 항목을 가져온다고 가정
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
@@ -272,13 +263,13 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                                 description = description))
                     }
 
+                    adapter.items=resItems
                     // 새로운 데이터를 RecyclerView에 추가
                     adapter.notifyDataSetChanged()
 
                     currenttoken = response.body()!!.nextPageToken
 
                     isLoading = false
-
                 }
             } catch (e: Exception) {
                 // 네트워크 오류 예외처리
@@ -287,8 +278,6 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             }
         }
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
