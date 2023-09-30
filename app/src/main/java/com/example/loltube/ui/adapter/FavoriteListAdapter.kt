@@ -5,23 +5,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loltube.databinding.FavoriteItemBinding
-import com.example.loltube.model.Snippet
+import com.example.loltube.model.LOLModel
 
 
 class FavoriteListAdapter : RecyclerView.Adapter<FavoriteListAdapter.ViewHolder>() {
 
-    private var favoriteList = mutableListOf<Snippet>()
+    private var favoriteList = mutableListOf<LOLModel>()
 
     class ViewHolder (private val binding : FavoriteItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(favorite: Snippet) {
+        fun bind(favorite: LOLModel) {
             Glide.with(binding.root.context)
-                .load(favorite.thumbnails.medium.url)
+                .load(favorite.thumbnail)
                 .into(binding.favoriteThumbnailImage)
             binding.mypageItemTitle.text = favorite.title
         }
     }
 
-    fun setList(favoriteList : MutableList<Snippet>) {
+    fun setList(favoriteList : MutableList<LOLModel>) {
         this.favoriteList = favoriteList
         notifyItemRangeChanged(0, this.favoriteList.size)
     }

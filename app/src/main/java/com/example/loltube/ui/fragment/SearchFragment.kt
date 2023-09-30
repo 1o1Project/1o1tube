@@ -96,7 +96,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
                     val description =snippet.snippet.description
-                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description))
+                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description, url = url))
                 }
             }
 
