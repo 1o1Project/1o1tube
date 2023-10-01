@@ -52,9 +52,9 @@ class SharedPrefInstance private constructor() {
             val storedData : MutableList<LOLModel> = gson.fromJson(json, object : TypeToken<MutableList<LOLModel>?>() {}.type) ?: mutableListOf()
 
             if (storedData.none { it.title == value.title && it.thumbnail == value.thumbnail }) {
-                return@withContext true
+                return@withContext false
             }
-            return@withContext false
+            return@withContext true
         }
 
     suspend fun deleteBookmarkPref(value: LOLModel) {

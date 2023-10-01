@@ -161,7 +161,8 @@ class HomeFragment : Fragment() {
                     LOLModel(
                         thumbnail = it.snippet.thumbnails.medium.url,
                         title = it.snippet.title,
-                        description = it.snippet.description
+                        description = it.snippet.description,
+                        url = "https://www.youtube.com/watch?v=${it.id}"
                     )
                 )
             }
@@ -192,7 +193,8 @@ class HomeFragment : Fragment() {
                                     LOLModel(
                                         thumbnail = it.snippet.thumbnails.medium.url,
                                         title = it.snippet.title,
-                                        description = it.snippet.description
+                                        description = it.snippet.description,
+                                        url = "https://www.youtube.com/watch?v=${it.id}"
                                     )
                                 )
                             }
@@ -219,7 +221,8 @@ class HomeFragment : Fragment() {
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
                             title = it.snippet.title,
-                            description = it.snippet.description
+                            description = it.snippet.description,
+                            url = "https://www.youtube.com/watch?v=${it.id}"
                         )
                     )
                 }
@@ -249,7 +252,8 @@ class HomeFragment : Fragment() {
                                     LOLModel(
                                         thumbnail = it.snippet.thumbnails.medium.url,
                                         title = it.snippet.title,
-                                        description = it.snippet.description
+                                        description = it.snippet.description,
+                                        url = "https://www.youtube.com/watch?v=${it.id}"
                                     )
                                 )
                             }
@@ -278,7 +282,8 @@ class HomeFragment : Fragment() {
                         LOLModel(
                             thumbnail = it.snippet.thumbnails.medium.url,
                             title = it.snippet.title,
-                            description = it.snippet.description
+                            description = it.snippet.description,
+                            url = "https://www.youtube.com/watch?v=${it.id}"
                         )
                     )
                 }
@@ -309,7 +314,8 @@ class HomeFragment : Fragment() {
                                     LOLModel(
                                         thumbnail = it.snippet.thumbnails.medium.url,
                                         title = it.snippet.title,
-                                        description = it.snippet.description
+                                        description = it.snippet.description,
+                                        url = "https://www.youtube.com/watch?v=${it.id}"
                                     )
                                 )
                             }

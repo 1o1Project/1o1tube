@@ -10,6 +10,7 @@ import com.example.loltube.databinding.ShortsItemBinding
 import com.example.loltube.model.Items
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 class ShortsListAdapter(private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.Adapter<ShortsListAdapter.ViewHolder>() {
@@ -27,13 +28,13 @@ class ShortsListAdapter(private val lifecycle: androidx.lifecycle.Lifecycle) : R
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     super.onReady(youTubePlayer)
                     this@ViewHolder.youTubePlayer = youTubePlayer
-                    currentVideoId?.let { youTubePlayer.loadVideo(it, 0f) }
+                    currentVideoId?.let { youTubePlayer.loadOrCueVideo(lifecycle, it, 0f) }
                 }
             })
         }
         fun bind(items: Items) {
             currentVideoId = items.id.videoId
-            youTubePlayer?.loadVideo(items.id.videoId, 0f)
+            youTubePlayer?.loadOrCueVideo(lifecycle, items.id.videoId, 0f)
         }
     }
 
