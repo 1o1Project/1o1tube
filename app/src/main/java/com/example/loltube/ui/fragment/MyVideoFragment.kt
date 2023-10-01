@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.loltube.data.RetrofitInstance
+import com.example.loltube.data.SharedPrefInstance
 import com.example.loltube.databinding.FragmentMyVideoBinding
 import com.example.loltube.model.Snippet
 import com.example.loltube.ui.adapter.FavoriteListAdapter
@@ -47,10 +49,10 @@ class MyVideoFragment : Fragment() {
 
 
         lifecycleScope.launch {
-            //SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
-            //    adapter.setList(it.toMutableList())
-            //}
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
+               adapter.setList(it.toMutableList())
+            }
+            /*repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val response = RetrofitInstance.api.getYoutubeTrendVideos(
                     regionCode = Utils().getISORegionCode(),
                     maxResults = 10
@@ -59,7 +61,7 @@ class MyVideoFragment : Fragment() {
                     val youtubeVideoInfo = response.body()!!
                     adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
                 }
-            }
+            }*/
         }
     }
 

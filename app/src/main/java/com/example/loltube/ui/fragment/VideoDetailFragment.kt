@@ -1,5 +1,6 @@
 package com.example.loltube.ui.fragment
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -7,11 +8,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.loltube.data.SharedPrefInstance
 import com.example.loltube.databinding.FragmentVideoDetailBinding
 import com.example.loltube.model.LOLModel
 import com.example.loltube.util.Constants.Companion.EXTRA_ITEM
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VideoDetailFragment : Fragment() {
 
@@ -47,22 +54,90 @@ class VideoDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initView() {
 
-        binding.textView2.text = item?.title
-        binding.textView3.text = item?.description
+        binding.detailTitle.text = item?.title
+        binding.detailDescription.text = item?.description
 
         item?.thumbnail?.let { imageUrl ->
             Glide.with(this)
                 .load(imageUrl)
-                .into(binding.imageView)
+                .into(binding.detailThumbnail)
+        }
+
+        val sharedPrefInstance = SharedPrefInstance.getInstance()
+        lifecycleScope.launch(Dispatchers.Main) {
+            val isBookmarked = withContext(Dispatchers.IO) {
+                sharedPrefInstance.isBookmark(item!!)
+            }
+            updateButtonState(isBookmarked)
         }
 
 
-        Log.d("VideoDetailFragment", "Title: ${item?.title}")
+        binding.likeButton.setOnClickListener {
+
+            lifecycleScope.launch {
+                item?.let {
+                    val isBookmarked = SharedPrefInstance.getInstance().isBookmark(it)
+
+                    if (!isBookmarked) {
+                        SharedPrefInstance.getInstance().addBookmarkPref(it)
+                        showToast("myvideo에 추가되었습니다.")
+                        updateButtonState(true)
+
+                    }
+                }
+            }
+        }
+
+        binding.unlikeButton.setOnClickListener {
+
+            lifecycleScope.launch {
+                item?.let {
+                    val isBookmarked = SharedPrefInstance.getInstance().isBookmark(it)
+
+                    if (isBookmarked) {
+                        SharedPrefInstance.getInstance().deleteBookmarkPref(it)
+                        showToast("myvideo에서 삭제됩니다.")
+                        updateButtonState(false)
+
+                    }
+
+                }
+            }
+        }
+
+
+
+        binding.shareButton.setOnClickListener {
+            val videoUrl = item?.url
+
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, videoUrl)
+
+            startActivity(Intent.createChooser(shareIntent, "비디오 공유"))
+        }
+
+
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateButtonState(isLiked: Boolean) {
+        if (isLiked) {
+            binding.likeButton.visibility = View.INVISIBLE
+            binding.unlikeButton.visibility = View.VISIBLE
+        } else {
+            binding.likeButton.visibility = View.VISIBLE
+            binding.unlikeButton.visibility = View.INVISIBLE
+        }
     }
 
     override fun onDestroyView() {
