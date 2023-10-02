@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.loltube.R
 import com.example.loltube.data.RetrofitInstance
@@ -24,7 +25,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
 
     // lateinit 대신 by lazy 로 변경
     private var _binding: FragmentSearchBinding? = null
-    private val binding:FragmentSearchBinding get() = _binding!!
+    private val binding: FragmentSearchBinding get() = _binding!!
     private val adapter: SearchAdapter by lazy {
         SearchAdapter(requireContext())
     }
@@ -33,8 +34,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     }
 
     private val resItems: ArrayList<LOLModel> = ArrayList()
-
-
+    private var query:String =""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +47,7 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setupScrollListener()
     }
 
     private fun initView() {
@@ -56,18 +57,17 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         //어댑터 연결
         binding.fragmentSearchRecyclerView.adapter = adapter
         adapter.setOnItemClickListener(this)
+
         //리스너 설정
         binding.searchBtn.setOnClickListener {
-            val query = binding.keyWord.text.toString()
+            query = binding.keyWord.text.toString()
 
             if (query.isNotEmpty()) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val query = query
+
                     adapter.itemClear()
-                    fetchItemResults(query)
-
+                    fetchItemResults()
                 }
-
             } else {
                 Toast.makeText(requireContext(), "검색어를 입력해 주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -78,15 +78,59 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             imm.hideSoftInputFromWindow(binding.keyWord.windowToken, 0)
         }
 
+        //카테고리 Top 리스너 설정
+        binding.topBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                query = "탑-롤"
+  //              binding.fragmentSearchRecyclerView.removeOnScrollListener(listnenr)
+
+                adapter.itemClear()
+                fetchItemResults()
+            }
+        }
+        binding.jgBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                query = "정글-롤"
+                adapter.itemClear()
+                fetchItemResults()
+            }
+        }
+        binding.midBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                query = "미드-롤"
+                adapter.itemClear()
+                fetchItemResults()
+            }
+        }
+        binding.adBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                query = "원딜-롤"
+                adapter.itemClear()
+                fetchItemResults()
+            }
+        }
+        binding.supBtn.setOnClickListener{
+
+            GlobalScope.launch(Dispatchers.Main) {
+                query = "서폿-롤"
+                adapter.itemClear()
+                fetchItemResults()
+            }
+        }
     }
 
+    private lateinit var currenttoken: String
 
-    //유튜브 검색 API
-    private suspend fun fetchItemResults(query: String) {
+    //유튜브 검색
+    private suspend fun fetchItemResults() {
         try {
             val response = RetrofitInstance.api.getYouTubeVideos(
                 query = query,
-                maxResults = 30,
+                maxResults = 10,
                 videoOrder = "relevance"
             )
 
@@ -96,9 +140,11 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
                     val title = snippet.snippet.title
                     val url = snippet.snippet.thumbnails.medium.url
                     val description =snippet.snippet.description
-                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description, url = url))
+                    resItems.add(LOLModel(title = title, thumbnail = url, description =  description, url = "https://www.youtube.com/watch?v=${snippet.id}"))
                 }
             }
+
+            currenttoken = response.body()!!.nextPageToken
 
             adapter.items = resItems
             adapter.notifyDataSetChanged()
@@ -107,6 +153,33 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
             Log.e("#error check", "Error: ${e.message}")
         }
     }
+
+    /*private suspend fun fetchCategoryResults(category:String){
+        try {
+            val response = RetrofitInstance.api.getCategory(
+                videoCategoryId = category, maxResults = 20
+            )
+
+            if (response.isSuccessful){
+                val youtubeVideo = response.body()!!
+                youtubeVideo?.items?.forEach { snippet ->
+                    val title = snippet.snippet.title
+                    val url = snippet.snippet.thumbnails.medium.url
+                    val description = snippet.snippet.description
+                    resItems.add(
+                        LOLModel(
+                            title = title,
+                            thumbnail = url,
+                            description = description
+                        )
+                    )
+                }
+            }
+        }catch (e: Exception) {
+            //네트워크 오류 예외처리
+            Log.e("#error check", "Error: ${e.message}")
+        }
+    }*/
 
     // 아이템 클릭 이벤트 처리
     override fun onItemClick(item: LOLModel) {
@@ -122,6 +195,83 @@ class SearchFragment : Fragment(), SearchAdapter.OnItemClickListener {
         transaction.add(R.id.main_fragment_frame, destinationFragment)
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    // 무한 스크롤 구현
+    private var isLoading = false // 추가 데이터 로드 중인지 여부를 나타내는 플래그
+    private val visibleThreshold = 10 // 스크롤 끝까지 내려갔다고 판단할 아이템 개수
+    private var lastVisibleItem = 0
+    private var totalItemCount = 0
+    private var visibleItemCount = 0
+
+    private lateinit var listnenr : RecyclerView.OnScrollListener
+
+    private fun setupScrollListener() {
+        listnenr = object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                totalItemCount = gridmanager.itemCount
+                visibleItemCount = gridmanager.childCount
+
+                val firstVisibleItemPositions = gridmanager.findFirstVisibleItemPositions(null)
+
+                if (firstVisibleItemPositions != null && firstVisibleItemPositions.isNotEmpty()) {
+                    lastVisibleItem = firstVisibleItemPositions[0]
+                }
+
+                // 추가 데이터 로드 중이 아니고, 스크롤이 끝까지 내려갔을 때
+                if (!isLoading && totalItemCount <= (visibleItemCount + lastVisibleItem + visibleThreshold)) {
+                    // 추가 데이터 로드를 위한 함수
+                    fetchMoreData()
+                    Log.d("query",query)
+                    isLoading = true
+                }
+            }
+        }
+        binding.fragmentSearchRecyclerView.addOnScrollListener(listnenr)
+    }
+
+    private fun fetchMoreData() {
+
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val response = RetrofitInstance.api.getYouTubeMoreVideos(
+                    query = query,
+                    maxResults = 10,
+                    videoOrder = "relevance",
+                    nextPageToken = currenttoken
+                )
+
+                if (response.isSuccessful) {
+                    val youtubeVideo = response.body()!!
+                    youtubeVideo?.items?.forEach { snippet ->
+                        val title = snippet.snippet.title
+                        val url = snippet.snippet.thumbnails.medium.url
+                        val description = snippet.snippet.description
+                        resItems.add(
+                            LOLModel(
+                                title = title,
+                                thumbnail = url,
+                                url = "https://www.youtube.com/watch?v=${snippet.id}",
+                                description = description))
+                    }
+
+                    adapter.items=resItems
+                    // 새로운 데이터를 RecyclerView에 추가
+                    adapter.notifyDataSetChanged()
+
+                    currenttoken = response.body()!!.nextPageToken
+
+                    isLoading = false
+                }
+            } catch (e: Exception) {
+                // 네트워크 오류 예외처리
+                Log.e("#error check", "Error: ${e.message}")
+                isLoading = false // 오류 발생 시 isLoading 플래그를 false로 설정하여 다시 시도할 수 있도록 함
+            }
+        }
     }
 
     override fun onDestroyView() {

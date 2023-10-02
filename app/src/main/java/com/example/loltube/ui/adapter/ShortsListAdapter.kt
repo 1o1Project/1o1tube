@@ -1,11 +1,8 @@
 package com.example.loltube.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.manager.Lifecycle
 import com.example.loltube.databinding.ShortsItemBinding
 import com.example.loltube.model.Items
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
