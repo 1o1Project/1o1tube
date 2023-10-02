@@ -49,6 +49,69 @@ interface YoutubeApiService {
         @Query("part") part: String = "snippet, contentDetails, statistics",
     ): Response<YoutubeVideoInfo>
 
+    @GET("videos")
+    suspend fun getMostPopular(
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("part") part: String = "snippet",
+        @Query("chart") chart: String = "mostPopular",
+        @Query("regionCode") regionCode: String = "KR",
+        @Query("videoCategoryId") videoCategoryId: String,
+        @Query("maxResults") maxResults: Int
+    ): Response<YoutubeVideoInfo>
+
+    @GET("videos")
+    suspend fun getNextMostPopular(
+        @Query("part") part: String = "snippet",
+        @Query("chart") chart: String = "mostPopular",
+        @Query("regionCode") regionCode: String = "KR",
+        @Query("videoCategoryId") videoCategoryId: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("pageToken") pageToken: String
+    ): Response<YoutubeVideoInfo>
+
+    @GET("videos")
+    suspend fun getCategory(
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("part") part: String = "snippet",
+        @Query("chart") chart: String = "mostPopular",
+        @Query("regionCode") regionCode: String = "KR",
+        @Query("videoCategoryId") videoCategoryId: String,
+        @Query("maxResults") maxResults: Int
+    ): Response<YoutubeVideoInfo>
+
+    @GET("videos")
+    suspend fun getNextCategory(
+        @Query("part") part: String = "snippet",
+        @Query("chart") chart: String = "mostPopular",
+        @Query("regionCode") regionCode: String = "KR",
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("videoCategoryId") videoCategoryId: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("pageToken") pageToken: String
+    ): Response<YoutubeVideoInfo>
+
+    @GET("search")
+    suspend fun getChannel(
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("part") part: String = "snippet",
+        @Query("q") query: String,
+        @Query("type") videoType: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("reginCode") regionCode: String
+    ): Response<YoutubeVideo>
+
+    @GET("search")
+    suspend fun getNextChannel(
+        @Query("key") apiKey: String = AUTH_HEADER,
+        @Query("part") part: String = "snippet",
+        @Query("q") query: String,
+        @Query("type") videoType: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("reginCode") regionCode: String,
+        @Query("pageToken") pageToken: String
+    ): Response<YoutubeVideo>
+
     @GET("channels")
     suspend fun getYoutubeChannelInfo(
         @Query("key") apiKey: String = AUTH_HEADER,

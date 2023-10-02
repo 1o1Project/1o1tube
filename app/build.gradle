@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id 'kotlin-android'
 }
 
 android {
@@ -63,4 +64,9 @@ dependencies {
 
     implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation 'com.github.skydoves:powerspinner:1.2.7'
+    // PowerSpinner
+
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
+
 }
