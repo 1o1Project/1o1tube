@@ -2,6 +2,7 @@ package com.example.loltube.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loltube.databinding.ShortsItemBinding
 import com.example.loltube.model.Items
@@ -14,7 +15,7 @@ class ShortsListAdapter(private val lifecycle: androidx.lifecycle.Lifecycle) : R
 
     private var shortList: List<Items> = mutableListOf()
 
-    class ViewHolder(binding: ShortsItemBinding, private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ShortsItemBinding, private val lifecycle: androidx.lifecycle.Lifecycle) : RecyclerView.ViewHolder(binding.root) {
         private var youTubePlayer: YouTubePlayer? = null
         private var currentVideoId: String? = null
         init {

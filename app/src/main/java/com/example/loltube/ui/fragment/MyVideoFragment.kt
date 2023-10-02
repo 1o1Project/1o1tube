@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import com.example.loltube.data.SharedPrefInstance
 import com.example.loltube.databinding.FragmentMyVideoBinding
 import com.example.loltube.model.Snippet
 import com.example.loltube.ui.adapter.FavoriteListAdapter
+import com.example.loltube.ui.viewmodel.MyVideoViewModel
 import com.example.loltube.util.Utils
 import kotlinx.coroutines.launch
 
@@ -28,6 +30,8 @@ class MyVideoFragment : Fragment() {
     private val adapter by lazy {
         FavoriteListAdapter()
     }
+
+    private val viewModel: MyVideoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,21 +51,8 @@ class MyVideoFragment : Fragment() {
         binding.mypageFavoriteRv.layoutManager = GridLayoutManager(requireActivity(), 2)
         binding.mypageFavoriteRv.itemAnimator = null
 
-
-        lifecycleScope.launch {
-            SharedPrefInstance.getInstance().getBookmarkList().asLiveData().observe(viewLifecycleOwner) {
-               adapter.setList(it.toMutableList())
-            }
-            /*repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val response = RetrofitInstance.api.getYoutubeTrendVideos(
-                    regionCode = Utils().getISORegionCode(),
-                    maxResults = 10
-                )
-                if (response.isSuccessful) {
-                    val youtubeVideoInfo = response.body()!!
-                    adapter.setList(youtubeVideoInfo.items?.map { it.snippet } as MutableList<Snippet>)
-                }
-            }*/
+        viewModel.bookmarkList.observe(viewLifecycleOwner) {
+            adapter.setList(it.toMutableList())
         }
     }
 

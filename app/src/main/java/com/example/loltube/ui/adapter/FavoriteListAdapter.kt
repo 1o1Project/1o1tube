@@ -23,7 +23,7 @@ class FavoriteListAdapter : RecyclerView.Adapter<FavoriteListAdapter.ViewHolder>
 
     fun setList(favoriteList : MutableList<LOLModel>) {
         this.favoriteList = favoriteList
-        notifyItemRangeChanged(0, this.favoriteList.size)
+        notifyDataSetChanged()
     }
 
 
