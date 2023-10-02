@@ -18,6 +18,7 @@ class ShortsRepositoryImpl : ShortsRepository {
 
     override suspend fun getShorts() = flow {
         emit(ApiState.Loading)
+
         try {
             val response =
                 api.getYouTubeVideos(query = "LCK 쇼츠", videoOrder = "viewCount", maxResults = 10)
